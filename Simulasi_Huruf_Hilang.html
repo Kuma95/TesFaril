@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Simulasi Tes Kecermatan (Huruf/Angka Hilang)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            touch-action: manipulation;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 450px;
+            width: 95%;
+            box-sizing: border-box;
+        }
+        h2 { margin-top: 0; color: #1e3a8a; }
+        p { font-size: 15px; color: #555; line-height: 1.5; }
+        
+        .timer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .timer { font-size: 24px; font-weight: bold; color: #ef4444; }
+        .col-indicator { font-size: 16px; font-weight: bold; color: #3b82f6; background: #dbeafe; padding: 5px 10px; border-radius: 6px; }
+
+        /* Tabel Referensi */
+        .reference-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background: #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .reference-table th { background: #3b82f6; color: white; padding: 10px; width: 20%; font-size: 18px; }
+        .reference-table td { padding: 15px 10px; font-size: 22px; font-weight: bold; border: 1px solid #cbd5e1; }
+
+        /* Area Soal */
+        .question-box {
+            font-size: 32px;
+            letter-spacing: 15px;
+            font-weight: bold;
+            background: #f8fafc;
+            border: 2px dashed #94a3b8;
+            border-radius: 8px;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            color: #0f172a;
+        }
+
+        /* Keypad Jawaban */
+        .keypad {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .key-btn {
+            background: #10b981;
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            flex: 1;
+            padding: 15px 0;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #059669;
+            transition: all 0.1s;
+        }
+        .key-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #059669; }
+
+        /* Tombol Aksi */
+        .action-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #2563eb;
+        }
+        .action-btn:active { transform: translateY(4px); box-shadow: 0 0 0; }
+        .stop-btn { background: #ef4444; box-shadow: 0 4px 0 #dc2626; margin-top: 10px; }
+        
+        #game-screen, #result-screen { display: none; }
+        
+        /* Hasil / Statistik */
+        .stat-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .stat { font-size: 18px; margin: 10px 0; display: flex; justify-content: space-between; }
+        .correct { color: #10b981; font-weight: bold; }
+        .wrong { color: #ef4444; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <!-- HALAMAN AWAL -->
+    <div class="container" id="start-screen">
+        <h2>Tes Kecermatan<br>(Angka / Huruf Hilang)</h2>
+        <p>Hafalkan 5 karakter pada <strong>Kolom Referensi</strong> (A, B, C, D, E).<br>
+        Pada soal, akan muncul 4 karakter. Tugas Anda menekan tombol huruf yang mewakili <strong>karakter yang HILANG</strong>.</p>
+        <p><em>*Kolom Referensi akan berganti secara otomatis setiap 20 soal.</em></p>
+        <p>Waktu Tes: <strong>10 Menit</strong></p>
+        <button class="action-btn" onclick="startGame()">Mulai Latihan</button>
+    </div>
+
+    <!-- HALAMAN TES -->
+    <div class="container" id="game-screen">
+        <div class="timer-container">
+            <div class="col-indicator" id="col-display">Kolom: 1</div>
+            <div class="timer" id="timer-display">10:00</div>
+        </div>
+        
+        <!-- Tabel Referensi -->
+        <table class="reference-table">
+            <thead>
+                <tr>
+                    <th>A</th>
+                    <th>B</th>
+                    <th>C</th>
+                    <th>D</th>
+                    <th>E</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="ref-A">-</td>
+                    <td id="ref-B">-</td>
+                    <td id="ref-C">-</td>
+                    <td id="ref-D">-</td>
+                    <td id="ref-E">-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Soal -->
+        <div class="question-box" id="question-display">
+            - - - -
+        </div>
+
+        <!-- Tombol Jawaban -->
+        <div class="keypad">
+            <button class="key-btn" onclick="checkAnswer(0)">A</button>
+            <button class="key-btn" onclick="checkAnswer(1)">B</button>
+            <button class="key-btn" onclick="checkAnswer(2)">C</button>
+            <button class="key-btn" onclick="checkAnswer(3)">D</button>
+            <button class="key-btn" onclick="checkAnswer(4)">E</button>
+        </div>
+        
+        <button class="action-btn stop-btn" onclick="endGame()">Selesai & Lihat Hasil</button>
+    </div>
+
+    <!-- HALAMAN HASIL -->
+    <div class="container" id="result-screen">
+        <h2>Hasil Tes Anda</h2>
+        
+        <div class="stat-box">
+            <div class="stat">Waktu Dihabiskan: <strong id="time-spent">00:00</strong></div>
+            <div class="stat">Kolom Diselesaikan: <strong id="cols-cleared">0</strong></div>
+            <hr>
+            <div class="stat">Total Dikerjakan: <strong id="total-answered">0</strong></div>
+            <div class="stat correct">Jawaban Benar: <span id="correct-count">0</span></div>
+            <div class="stat wrong">Jawaban Salah: <span id="wrong-count">0</span></div>
+            <hr>
+            <div class="stat">Akurasi: <strong id="accuracy">0%</strong></div>
+        </div>
+        
+        <button class="action-btn" onclick="location.reload()">Ulangi Latihan</button>
+    </div>
+
+    <!-- LOGIKA JAVASCRIPT -->
+    <script>
+        const TEST_DURATION = 10 * 60; // 10 menit (600 detik)
+        const QUESTIONS_PER_COLUMN = 20; // Ganti referensi tiap 20 soal
+        
+        let timeRemaining = TEST_DURATION;
+        let timerInterval;
+        
+        let currentColumn = 1;
+        let questionsInCurrentColumn = 0;
+        
+        let referenceArray = [];
+        let missingIndex = -1; // Index dari jawaban yang benar (0=A, 1=B, 2=C, 3=D, 4=E)
+        
+        let correctAnswers = 0;
+        let wrongAnswers = 0;
+
+        function generateReference() {
+            const pool = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            referenceArray = [];
+            
+            // Ambil 5 karakter acak yang berbeda
+            while (referenceArray.length < 5) {
+                let char = pool[Math.floor(Math.random() * pool.length)];
+                if (!referenceArray.includes(char)) {
+                    referenceArray.push(char);
+                }
+            }
+            
+            // Tampilkan ke tabel UI
+            document.getElementById('ref-A').innerText = referenceArray[0];
+            document.getElementById('ref-B').innerText = referenceArray[1];
+            document.getElementById('ref-C').innerText = referenceArray[2];
+            document.getElementById('ref-D').innerText = referenceArray[3];
+            document.getElementById('ref-E').innerText = referenceArray[4];
+            
+            document.getElementById('col-display').innerText = "Kolom: " + currentColumn;
+        }
+
+        function generateQuestion() {
+            // Tentukan 1 index yang akan "dihilangkan" (0 sampai 4)
+            missingIndex = Math.floor(Math.random() * 5);
+            
+            // Buat array soal berisi 4 karakter yang tersisa
+            let questionChars = [];
+            for (let i = 0; i < 5; i++) {
+                if (i !== missingIndex) {
+                    questionChars.push(referenceArray[i]);
+                }
+            }
+            
+            // Acak urutan 4 karakter tersebut agar tidak berurutan
+            questionChars = questionChars.sort(() => Math.random() - 0.5);
+            
+            // Tampilkan di UI
+            document.getElementById('question-display').innerText = questionChars.join("");
+        }
+
+        function startGame() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'block';
+            
+            generateReference();
+            generateQuestion();
+
+            // Jalankan Waktu
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function checkAnswer(selectedIndex) {
+            // Evaluasi Jawaban
+            if (selectedIndex === missingIndex) {
+                correctAnswers++;
+            } else {
+                wrongAnswers++;
+            }
+
+            questionsInCurrentColumn++;
+
+            // Cek apakah harus ganti kolom
+            if (questionsInCurrentColumn >= QUESTIONS_PER_COLUMN) {
+                currentColumn++;
+                questionsInCurrentColumn = 0;
+                generateReference();
+            }
+
+            // Generate soal berikutnya
+            generateQuestion();
+        }
+
+        function updateTimer() {
+            timeRemaining--;
+            let minutes = Math.floor(timeRemaining / 60);
+            let seconds = timeRemaining % 60;
+            
+            let timeString = 
+                (minutes < 10 ? "0" : "") + minutes + ":" + 
+                (seconds < 10 ? "0" : "") + seconds;
+                
+            document.getElementById('timer-display').innerText = timeString;
+
+            if (timeRemaining <= 0) {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+
+            let total = correctAnswers + wrongAnswers;
+            let accuracy = total === 0 ? 0 : Math.round((correctAnswers / total) * 100);
+            let timeSpent = TEST_DURATION - timeRemaining;
+            
+            let mSpent = Math.floor(timeSpent / 60);
+            let sSpent = timeSpent % 60;
+
+            document.getElementById('time-spent').innerText = 
+                (mSpent < 10 ? "0" : "") + mSpent + "m " + 
+                (sSpent < 10 ? "0" : "") + sSpent + "s";
+                
+            document.getElementById('cols-cleared').innerText = currentColumn;
+            document.getElementById('total-answered').innerText = total;
+            document.getElementById('correct-count').innerText = correctAnswers;
+            document.getElementById('wrong-count').innerText = wrongAnswers;
+            document.getElementById('accuracy').innerText = accuracy + "%";
+        }
+    </script>
+</body>
+</html>

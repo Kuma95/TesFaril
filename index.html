@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Simulasi Psikotes TNI/Polri</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e2e8f0;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .header-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header-title h1 {
+            color: #1e3a8a;
+            font-size: 32px;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .header-title p {
+            color: #64748b;
+            font-size: 16px;
+            margin: 0;
+        }
+        
+        .menu-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        /* Desain Kartu Menu */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px 20px;
+            width: 100%;
+            max-width: 320px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 2px solid transparent;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border-color: #3b82f6;
+        }
+
+        .card-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0f172a;
+            margin-bottom: 10px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            flex-grow: 1;
+        }
+
+        /* Tombol di dalam kartu */
+        .card-btn {
+            background: #3b82f6;
+            color: white;
+            padding: 12px 0;
+            border-radius: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .card-1 .card-btn { background: #3b82f6; }
+        .card-1:hover .card-btn { background: #2563eb; }
+        
+        .card-2 .card-btn { background: #10b981; }
+        .card-2:hover .card-btn { background: #059669; }
+        .card-2:hover { border-color: #10b981; }
+
+    </style>
+</head>
+<body>
+
+    <div class="header-title">
+        <h1>Simulasi Psikotes</h1>
+        <p>Pilih jenis latihan yang ingin Anda kerjakan hari ini</p>
+    </div>
+
+    <div class="menu-container">
+        <!-- Pilihan 1: Tes Koran -->
+        <a href="Simulasi_Pauli.html" class="card card-1">
+            <div class="card-icon">🧮</div>
+            <div class="card-title">Tes Kraepelin / Pauli<br>(Tes Koran)</div>
+            <div class="card-desc">Latih kecepatan dan konsistensi Anda dalam menjumlahkan angka secara vertikal. Cocok untuk melatih ketahanan mental.</div>
+            <div class="card-btn">Mulai Tes Koran</div>
+        </a>
+
+        <!-- Pilihan 2: Tes Kecermatan -->
+        <a href="Simulasi_Huruf_Hilang.html" class="card card-2">
+            <div class="card-icon">👁️</div>
+            <div class="card-title">Tes Kecermatan<br>(Angka / Huruf Hilang)</div>
+            <div class="card-desc">Latih daya ingat pendek, fokus, dan ketelitian mata Anda dalam mencari karakter yang hilang pada kolom referensi.</div>
+            <div class="card-btn">Mulai Tes Kecermatan</div>
+        </a>
+    </div>
+
+</body>
+</html>

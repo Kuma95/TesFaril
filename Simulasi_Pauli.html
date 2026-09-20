@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <!-- Mencegah zoom layar saat mengetuk tombol dengan cepat di HP -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Simulasi Tes Kraepelin / Pauli (Polri)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            touch-action: manipulation;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-sizing: border-box;
+        }
+        h2 { margin-top: 0; color: #1e3a8a; }
+        p { font-size: 15px; color: #555; line-height: 1.5; }
+        
+        .timer { 
+            font-size: 30px; 
+            font-weight: bold; 
+            color: #ef4444; 
+            margin-bottom: 20px; 
+        }
+        
+        /* Area Soal */
+        .question-box {
+            font-size: 80px;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 25px;
+            background: #e2e8f0;
+            border-radius: 12px;
+            padding: 10px 0;
+            color: #0f172a;
+        }
+        .question-box span { line-height: 1; }
+
+        /* Keypad ala Kalkulator */
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .key-btn {
+            background: #3b82f6;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 0;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #2563eb;
+            transition: all 0.1s;
+        }
+        .key-btn:active { 
+            transform: translateY(4px); 
+            box-shadow: 0 0 0 #2563eb; 
+        }
+        .key-zero { grid-column: span 3; background: #475569; box-shadow: 0 4px 0 #334155; }
+        .key-zero:active { box-shadow: 0 0 0 #334155; }
+
+        /* Tombol Aksi */
+        .action-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #059669;
+        }
+        .action-btn:active { transform: translateY(4px); box-shadow: 0 0 0; }
+        .stop-btn { background: #ef4444; box-shadow: 0 4px 0 #dc2626; margin-top: 20px; }
+        
+        /* Layar */
+        #game-screen, #result-screen { display: none; }
+        
+        /* Hasil / Statistik */
+        .stat-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .stat { font-size: 18px; margin: 10px 0; display: flex; justify-content: space-between; }
+        .correct { color: #10b981; font-weight: bold; }
+        .wrong { color: #ef4444; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <!-- HALAMAN AWAL -->
+    <div class="container" id="start-screen">
+        <h2>Simulasi Tes Pauli</h2>
+        <p>Jumlahkan angka atas dan bawah.<br><strong>Tulis angka satuan saja.</strong><br>(Misal: 8 + 7 = 15, maka tekan angka <strong>5</strong>).</p>
+        <p>Waktu Tes: <strong>15 Menit</strong><br><em>(Anda bisa mengakhiri tes lebih cepat)</em></p>
+        <button class="action-btn" onclick="startGame()">Mulai Latihan</button>
+    </div>
+
+    <!-- HALAMAN TES -->
+    <div class="container" id="game-screen">
+        <div class="timer" id="timer-display">15:00</div>
+        
+        <div class="question-box">
+            <span id="top-num">0</span>
+            <span id="bottom-num">0</span>
+        </div>
+
+        <div class="keypad">
+            <button class="key-btn" onclick="checkAnswer(7)">7</button>
+            <button class="key-btn" onclick="checkAnswer(8)">8</button>
+            <button class="key-btn" onclick="checkAnswer(9)">9</button>
+            <button class="key-btn" onclick="checkAnswer(4)">4</button>
+            <button class="key-btn" onclick="checkAnswer(5)">5</button>
+            <button class="key-btn" onclick="checkAnswer(6)">6</button>
+            <button class="key-btn" onclick="checkAnswer(1)">1</button>
+            <button class="key-btn" onclick="checkAnswer(2)">2</button>
+            <button class="key-btn" onclick="checkAnswer(3)">3</button>
+            <button class="key-btn key-zero" onclick="checkAnswer(0)">0</button>
+        </div>
+        
+        <button class="action-btn stop-btn" onclick="endGame()">Selesai & Lihat Hasil</button>
+    </div>
+
+    <!-- HALAMAN HASIL -->
+    <div class="container" id="result-screen">
+        <h2>Hasil Tes Anda</h2>
+        
+        <div class="stat-box">
+            <div class="stat">Waktu Dihabiskan: <strong id="time-spent">00:00</strong></div>
+            <hr>
+            <div class="stat">Total Dikerjakan: <strong id="total-answered">0</strong></div>
+            <div class="stat correct">Jawaban Benar: <span id="correct-count">0</span></div>
+            <div class="stat wrong">Jawaban Salah: <span id="wrong-count">0</span></div>
+            <hr>
+            <div class="stat">Akurasi: <strong id="accuracy">0%</strong></div>
+        </div>
+        
+        <button class="action-btn" onclick="location.reload()">Ulangi Latihan</button>
+    </div>
+
+    <!-- LOGIKA JAVASCRIPT -->
+    <script>
+        const TEST_DURATION = 15 * 60; // 15 menit (900 detik)
+        let timeRemaining = TEST_DURATION;
+        let timerInterval;
+        
+        let topNumber = 0;
+        let bottomNumber = 0;
+        
+        let correctAnswers = 0;
+        let wrongAnswers = 0;
+
+        // Menghasilkan angka acak dari 1 sampai 9
+        function getRandomNumber() {
+            return Math.floor(Math.random() * 9) + 1; 
+        }
+
+        function startGame() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'block';
+            
+            // Soal pertama
+            topNumber = getRandomNumber();
+            bottomNumber = getRandomNumber();
+            updateDisplay();
+
+            // Jalankan Waktu
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateDisplay() {
+            document.getElementById('top-num').innerText = topNumber;
+            document.getElementById('bottom-num').innerText = bottomNumber;
+        }
+
+        function checkAnswer(inputNumber) {
+            // Cek kebenaran (hanya ambil digit terakhir dari hasil jumlah)
+            let sum = topNumber + bottomNumber;
+            let correctAnswer = sum % 10;
+
+            if (inputNumber === correctAnswer) {
+                correctAnswers++;
+            } else {
+                wrongAnswers++;
+            }
+
+            // Simulasi Pauli: Angka bawah naik ke atas, lalu buat angka bawah baru
+            topNumber = bottomNumber;
+            bottomNumber = getRandomNumber();
+            updateDisplay();
+        }
+
+        function updateTimer() {
+            timeRemaining--;
+            let minutes = Math.floor(timeRemaining / 60);
+            let seconds = timeRemaining % 60;
+            
+            // Format menit dan detik agar selalu 2 digit (00:00)
+            let timeString = 
+                (minutes < 10 ? "0" : "") + minutes + ":" + 
+                (seconds < 10 ? "0" : "") + seconds;
+                
+            document.getElementById('timer-display').innerText = timeString;
+
+            // Jika waktu habis otomatis selesai
+            if (timeRemaining <= 0) {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+
+            let total = correctAnswers + wrongAnswers;
+            let accuracy = total === 0 ? 0 : Math.round((correctAnswers / total) * 100);
+            let timeSpent = TEST_DURATION - timeRemaining;
+            
+            let mSpent = Math.floor(timeSpent / 60);
+            let sSpent = timeSpent % 60;
+
+            document.getElementById('time-spent').innerText = 
+                (mSpent < 10 ? "0" : "") + mSpent + "m " + 
+                (sSpent < 10 ? "0" : "") + sSpent + "s";
+                
+            document.getElementById('total-answered').innerText = total;
+            document.getElementById('correct-count').innerText = correctAnswers;
+            document.getElementById('wrong-count').innerText = wrongAnswers;
+            document.getElementById('accuracy').innerText = accuracy + "%";
+        }
+    </script>
+</body>
+</html>
