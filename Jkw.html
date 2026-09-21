@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master TIU - Jarak, Kecepatan, Waktu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc; 
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .cat-card { transition: all 0.2s ease-in-out; }
+        .cat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.05); }
+        .cat-card.selected { border-color: #0ea5e9; background-color: #f0f9ff; box-shadow: 0 0 0 2px #0ea5e9; }
+        
+        .opt-btn { transition: all 0.15s ease; }
+        .opt-btn:hover:not(:disabled) { border-color: #7dd3fc; background-color: #f0f9ff; }
+        .opt-btn.selected { background-color: #0ea5e9; color: white; border-color: #0284c7; }
+        .opt-btn.selected .opt-letter { background-color: white; color: #0ea5e9; }
+        
+        .header-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex justify-center items-center py-6 px-4 sm:px-6">
+
+    <div class="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden relative border border-slate-200">
+        
+        <!-- Header -->
+        <div class="header-bg text-white p-6 sm:p-8 text-center relative border-b-4 border-sky-500">
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center justify-center gap-3">
+                <svg class="w-8 h-8 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Latihan Soal JKW (Jarak, Kecepatan, Waktu)
+            </h1>
+            <p class="text-slate-300 mt-2 text-sm sm:text-base">Cocok untuk persiapan CPNS, Sekolah Kedinasan, dan Ujian Umum</p>
+        </div>
+
+        <!-- Home Screen -->
+        <div id="home-screen" class="p-6 sm:p-10 fade-in">
+            <!-- Pengaturan Waktu -->
+            <div class="mb-8 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    1. Pengaturan Waktu
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <label class="cursor-pointer relative">
+                        <input type="radio" name="timer" value="60" class="peer sr-only" checked>
+                        <div class="p-4 border-2 border-slate-300 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50 text-center h-full flex flex-col justify-center">
+                            <span class="block text-lg font-bold text-slate-700 peer-checked:text-sky-700">1 Menit / Soal</span>
+                            <span class="inline-block mt-1 text-xs font-bold bg-amber-100 text-amber-700 px-2 py-1 rounded-md mx-auto">Standar Ujian Asli</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer relative">
+                        <input type="radio" name="timer" value="120" class="peer sr-only">
+                        <div class="p-4 border-2 border-slate-300 rounded-xl peer-checked:border-sky-500 peer-checked:bg-sky-50 text-center h-full flex flex-col justify-center">
+                            <span class="block text-lg font-bold text-slate-700 peer-checked:text-sky-700">2 Menit / Soal</span>
+                            <span class="inline-block mt-1 text-xs font-bold text-slate-500 mx-auto">Untuk Latihan & Pemahaman</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Pilih Kategori -->
+            <div class="mb-8">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    2. Pilih Kategori Soal (10 Soal / Sesi)
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="category-grid">
+                    <!-- Cards will be injected via JS -->
+                </div>
+            </div>
+
+            <button onclick="startQuiz()" id="start-btn" class="w-full bg-slate-200 text-slate-500 font-bold py-4 rounded-xl transition text-lg cursor-not-allowed" disabled>
+                PILIH KATEGORI TERLEBIH DAHULU
+            </button>
+        </div>
+
+        <div id="quiz-screen" class="p-6 sm:p-10 hidden flex-col min-h-[500px]">
+            <!-- Header Kuis -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 pb-4 mb-6 gap-4">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <span id="question-counter" class="bg-slate-800 text-white text-xs font-bold px-3 py-1 rounded tracking-wide">SOAL 1/10</span>
+                        <span id="difficulty-badge" class="text-xs font-bold px-3 py-1 rounded border bg-slate-100">MUDAH</span>
+                    </div>
+                    <p id="quiz-category-title" class="text-sm text-slate-500 mt-2 font-medium">Kategori: Campuran</p>
+                </div>
+                <div id="timer-box" class="flex items-center gap-2 bg-slate-100 text-slate-700 border border-slate-200 px-4 py-2 rounded-lg font-bold transition-colors duration-300">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span id="timer-display" class="text-lg tabular-nums tracking-wider">01:00</span>
+                </div>
+            </div>
+
+            <!-- Konten Soal -->
+            <div class="mb-6 flex-grow flex flex-col">
+                <div class="bg-blue-50/50 p-5 rounded-xl border border-blue-100 mb-6 text-slate-800 text-lg leading-relaxed font-medium" id="question-text">
+                    <!-- Soal muncul di sini -->
+                </div>
+                
+                <div id="options-container" class="space-y-3 mt-auto">
+                    <!-- Pilihan Ganda -->
+                </div>
+            </div>
+
+            <button id="next-btn" onclick="nextQuestion()" class="w-full bg-slate-200 text-slate-400 font-bold py-4 rounded-xl cursor-not-allowed transition text-lg" disabled>
+                PILIH JAWABAN
+            </button>
+        </div>
+
+        <div id="result-screen" class="p-6 sm:p-10 hidden">
+            <div class="text-center mb-8 bg-slate-800 rounded-2xl p-8 shadow-lg">
+                <h2 class="text-2xl font-bold text-white mb-2">Skor Akhir Anda</h2>
+                <div class="text-5xl font-extrabold text-sky-400 my-4" id="final-score">0</div>
+                <p id="result-summary" class="text-slate-300 font-medium text-lg">Menjawab Benar: 0 dari 10 Soal</p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="font-bold text-xl mb-4 text-slate-800 border-b pb-2">Pembahasan Detail</h3>
+                <div id="review-container" class="space-y-6">
+                    <!-- Konten Review -->
+                </div>
+            </div>
+
+            <button onclick="resetApp()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 rounded-xl transition text-lg mt-4">
+                Kembali ke Menu Utama
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Data Kamus Umum
+        const names = ["Andi", "Budi", "Citra", "Dimas", "Eka", "Fajar", "Gilang", "Hana", "Iqbal", "Jojo", "Rina", "Siska"];
+        const cities = ["Kota A", "Kota B", "Kota C", "Kota D", "Kota X", "Kota Y", "Jakarta", "Bandung", "Surabaya", "Semarang"];
+        const vehicles = ["mobil", "sepeda motor", "bus", "kereta api", "sepeda"];
+
+        const categories = [
+            { id: 1, title: "Segitiga JKW", desc: "Mencari Jarak, Kecepatan, atau Waktu.", icon: "📐" },
+            { id: 2, title: "Konversi Satuan", desc: "Perubahan km/jam ke m/s.", icon: "⏱️" },
+            { id: 3, title: "Papasan (Berangkat SAMA)", desc: "Waktu berangkat sama, bertemu di jalan.", icon: "🤝" },
+            { id: 4, title: "Papasan (Berangkat BEDA)", desc: "Waktu berangkat beda, selisih jarak.", icon: "⏳" },
+            { id: 5, title: "Menyusul (Searah)", desc: "Pengejaran dengan selisih waktu.", icon: "🏃" },
+            { id: 6, title: "Kecepatan Rata-Rata", desc: "Rumus khusus rute Pulang-Pergi.", icon: "🔄" },
+            { id: 7, title: "CAMPURAN (Semua Kategori)", desc: "10 soal acak dari semua materi di atas.", icon: "🔥", isSpecial: true }
+        ];
+
+        let selectedCategoryId = null;
+        let timePerQuestion = 60;
+        let questions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+        let timerInterval;
+        let timeRemaining = 0;
+        let currentSelectedOption = null;
+        const totalQuestions = 10;
+
+        // Utilities
+        const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+        const getTwo = (arr) => {
+            let a = rand(arr), b = rand(arr);
+            while (a === b) b = rand(arr);
+            return [a, b];
+        };
+        // Menambah menit ke waktu format HH:MM
+        const addMins = (timeStr, mins) => {
+            let [h, m] = timeStr.split(':').map(Number);
+            let totalMins = (h * 60) + m + mins;
+            let finalH = Math.floor(totalMins / 60) % 24;
+            let finalM = Math.round(totalMins % 60);
+            return `${finalH.toString().padStart(2, '0')}:${finalM.toString().padStart(2, '0')}`;
+        };
+
+        // Option Generator (5 options, shuffled)
+        const genOptions = (correct, distractors, unit = "") => {
+            let ops = new Set();
+            let cStr = correct.toString();
+            ops.add(cStr);
+            
+            for(let d of distractors) {
+                let dStr = d.toString();
+                if(ops.size < 5 && dStr !== cStr) ops.add(dStr);
+            }
+            
+            // Fallback fill to 5
+            let modifier = 1;
+            while(ops.size < 5) {
+                let fallback = typeof correct === 'number' ? correct + modifier : correct + "a";
+                if(!ops.has(fallback.toString())) ops.add(fallback.toString());
+                modifier++;
+            }
+
+            return Array.from(ops).map(x => ({ 
+                text: x + (unit ? ` ${unit}` : ''), 
+                isCorrect: x === cStr 
+            })).sort(() => Math.random() - 0.5);
+        };
+
+        function createQuestion(typeId) {
+            let p = getTwo(names), loc = getTwo(cities), veh = getTwo(vehicles);
+            let q = { category: typeId };
+            
+            switch(typeId) {
+                case 1: // Segitiga JKW Dasar
+                    let dif1 = rand(['Mudah', 'Sedang', 'HOTS 🔥']);
+                    q.difficulty = dif1;
+                    let v1 = rand([40, 50, 60, 80]); // km/jam
+                    let wHours = rand([1, 1.5, 2, 2.5]); // jam
+                    let j1 = v1 * wHours; // Selalu bulat
+                    let start1 = `0${rand([6,7,8])}:${rand(['00','30'])}`;
+
+                    if(dif1 === 'Mudah') {
+                        q.text = `${p[0]} mengendarai ${veh[0]} dari ${loc[0]} ke ${loc[1]} selama ${wHours} jam dengan kecepatan rata-rata ${v1} km/jam. Berapakah jarak antara kedua kota tersebut?`;
+                        q.options = genOptions(j1, [j1+10, j1-20, v1*(wHours+1), j1+20], "km");
+                        q.explanation = `<b>Rumus:</b> Jarak = Kecepatan × Waktu<br>Jarak = ${v1} km/jam × ${wHours} jam = <b>${j1} km</b>.`;
+                    } else if (dif1 === 'Sedang') {
+                        let arrive1 = addMins(start1, wHours * 60);
+                        q.text = `Jarak ${loc[0]} ke ${loc[1]} adalah ${j1} km. Jika ${p[0]} berangkat pukul ${start1} menggunakan ${veh[0]} dengan kecepatan ${v1} km/jam tanpa henti, pukul berapakah ia tiba di tujuan?`;
+                        q.options = genOptions(arrive1, [addMins(arrive1, 30), addMins(arrive1, -30), addMins(arrive1, 60), addMins(arrive1, -60)]);
+                        q.explanation = `<b>Langkah 1:</b> Cari waktu tempuh (W) = Jarak / Kecepatan.<br>W = ${j1} / ${v1} = ${wHours} jam = ${wHours * 60} menit.<br><b>Langkah 2:</b> Waktu Tiba = Waktu Berangkat + Waktu Tempuh = ${start1} + ${wHours * 60} menit = <b>${arrive1}</b>.`;
+                    } else {
+                        // HOTS - ada istirahat
+                        let restMins = rand([15, 30, 45]);
+                        let arrive2 = addMins(start1, (wHours * 60) + restMins);
+                        q.text = `${p[0]} melakukan perjalanan dari ${loc[0]} menuju ${loc[1]} berjarak ${j1} km dengan kecepatan ${v1} km/jam. Ia berangkat pukul ${start1}. Di tengah perjalanan, ia berhenti untuk makan selama ${restMins} menit. Pukul berapakah ia sampai di tujuan?`;
+                        q.options = genOptions(arrive2, [addMins(start1, wHours*60), addMins(arrive2, 15), addMins(arrive2, -restMins), addMins(arrive2, 30)]);
+                        q.explanation = `<b>Langkah 1:</b> Cari waktu jalan tempuh = ${j1} / ${v1} = ${wHours} jam (${wHours*60} menit).<br><b>Langkah 2:</b> Tambahkan waktu istirahat. Total waktu = ${wHours*60} + ${restMins} = ${(wHours*60)+restMins} menit.<br><b>Langkah 3:</b> Tiba = ${start1} + ${(wHours*60)+restMins} menit = <b>${arrive2}</b>.`;
+                    }
+                    break;
+
+                case 2: // Konversi Satuan
+                    let dif2 = rand(['Mudah', 'HOTS 🔥']);
+                    q.difficulty = dif2;
+                    let kmh = rand([36, 54, 72, 90, 108]); // Pasti bulat dibagi 36 (kelipatan 10/36 atau 5/18)
+                    let ms = kmh * (10 / 36); 
+                    
+                    if (dif2 === 'Mudah') {
+                        q.text = `Sebuah ${veh[0]} melaju dengan kecepatan ${kmh} km/jam. Kecepatan kendaraan tersebut jika dinyatakan dalam meter/detik (m/s) adalah ...`;
+                        q.options = genOptions(ms, [ms+5, ms-5, ms*2, ms/2], "m/s");
+                        q.explanation = `<b>Rumus Cepat:</b> Kalikan km/jam dengan (10/36) atau (5/18).<br>${kmh} × (10 / 36) = <b>${ms} m/s</b>.`;
+                    } else {
+                        let distM = rand([100, 200, 300, 400]); // meter
+                        let timeS = distM / ms; // detik
+                        q.text = `Dalam sebuah perlombaan, ${p[0]} mengayuh sepedanya dengan kecepatan rata-rata ${kmh} km/jam. Jika panjang lintasan lomba adalah ${distM} meter, berapa detik waktu yang ia butuhkan untuk mencapai garis finish?`;
+                        q.options = genOptions(timeS, [timeS+10, timeS-5, Math.round(distM/kmh), timeS+20], "detik");
+                        q.explanation = `<b>Langkah 1:</b> Samakan satuan! Konversi kecepatan ke m/s. ${kmh} × (10/36) = ${ms} m/s.<br><b>Langkah 2:</b> Cari waktu (W = Jarak / Kecepatan). W = ${distM} meter / ${ms} m/s = <b>${timeS} detik</b>.`;
+                    }
+                    break;
+
+                case 3: // Papasan (Waktu SAMA)
+                    let dif3 = rand(['Sedang', 'HOTS 🔥']);
+                    q.difficulty = dif3;
+                    // Supaya angkanya pas, kita buat kecepatan V1 dan V2, dan waktu bertemunya bulat
+                    let kA = rand([40, 50, 60]); 
+                    let kB = rand([40, 50, 60]); 
+                    let waktuJam = rand([1, 1.5, 2]); // Waktu bertemu (jam)
+                    let jarakTotal = (kA + kB) * waktuJam;
+                    let waktuBerangkat = `0${rand([6,7,8])}:00`;
+                    let waktuKetemu = addMins(waktuBerangkat, waktuJam * 60);
+
+                    if (dif3 === 'Sedang') {
+                        q.text = `Jarak ${loc[0]} dan ${loc[1]} adalah ${jarakTotal} km. Pada pukul ${waktuBerangkat}, ${p[0]} berangkat dari ${loc[0]} ke ${loc[1]} dengan kecepatan ${kA} km/jam. Pada waktu yang sama, ${p[1]} berangkat dari ${loc[1]} ke ${loc[0]} dengan kecepatan ${kB} km/jam. Pukul berapa mereka akan berpapasan?`;
+                        q.options = genOptions(waktuKetemu, [addMins(waktuKetemu, 30), addMins(waktuKetemu, -30), addMins(waktuBerangkat, (jarakTotal/kA)*60), addMins(waktuKetemu, 60)]);
+                        q.explanation = `<b>Rumus Berpapasan Waktu Sama:</b> Waktu = Jarak Total / (Kecepatan 1 + Kecepatan 2)<br>W = ${jarakTotal} / (${kA} + ${kB}) = ${jarakTotal} / ${kA+kB} = ${waktuJam} jam.<br>Waktu Papasan = Pukul Berangkat + ${waktuJam} jam = ${waktuBerangkat} + ${waktuJam*60} menit = <b>${waktuKetemu}</b>.`;
+                    } else {
+                        let jarakDariA = kA * waktuJam;
+                        q.text = `Jarak ${loc[0]} dan ${loc[1]} adalah ${jarakTotal} km. Pukul ${waktuBerangkat}, ${p[0]} berangkat dari ${loc[0]} menuju ${loc[1]} dengan kecepatan ${kA} km/jam. Di waktu bersamaan, ${p[1]} menuju ${loc[0]} dari ${loc[1]} dengan kecepatan ${kB} km/jam. Pada jarak berapa kilometer dari ${loc[0]} mereka saling berpapasan?`;
+                        q.options = genOptions(jarakDariA, [jarakDariA+10, kB * waktuJam, jarakTotal/2, jarakDariA-20], "km");
+                        q.explanation = `<b>Langkah 1:</b> Hitung waktu berpapasan. W = Jarak / (K1+K2) = ${jarakTotal} / ${kA+kB} = ${waktuJam} jam.<br><b>Langkah 2:</b> Jarak papasan dari tempat keberangkatan ${p[0]} (${loc[0]}) = Kecepatan ${p[0]} × Waktu Bertemu.<br>Jarak = ${kA} × ${waktuJam} = <b>${jarakDariA} km</b>.`;
+                    }
+                    break;
+
+                case 4: // Papasan (Waktu BEDA)
+                    let dif4 = rand(['Susah', 'HOTS 🔥']);
+                    q.difficulty = dif4;
+                    // Logic: K1 berangkat dulu (selisih waktu W_selisih).
+                    // Jarak yang ditempuh K1 di awal = K1 * W_selisih = S_awal.
+                    // Sisa jarak = Total Jarak - S_awal.
+                    // Sisa jarak harus habis dibagi (K1 + K2) supaya waktunya bulat.
+                    // Set Data: 
+                    const setBeda = [
+                        { k1: 40, k2: 60, bedaMenit: 30, wSisaJam: 1 },    // S_awal=20. K1+K2=100. S_sisa=100. Total=120.
+                        { k1: 50, k2: 70, bedaMenit: 30, wSisaJam: 1.5 },  // S_awal=25. K1+K2=120. S_sisa=180. Total=205.
+                        { k1: 60, k2: 80, bedaMenit: 15, wSisaJam: 1 },    // S_awal=15. K1+K2=140. S_sisa=140. Total=155.
+                    ];
+                    let chosen = rand(setBeda);
+                    let k1_4 = chosen.k1, k2_4 = chosen.k2;
+                    let selisihJam = chosen.bedaMenit / 60;
+                    let jarakAwal = k1_4 * selisihJam;
+                    let jarakSisa = (k1_4 + k2_4) * chosen.wSisaJam;
+                    let totalJarak = jarakAwal + jarakSisa;
+                    
+                    let berangkat1 = `07:00`;
+                    let berangkat2 = addMins(berangkat1, chosen.bedaMenit);
+                    let waktuKetemu4 = addMins(berangkat2, chosen.wSisaJam * 60);
+
+                    if(dif4 === 'Susah') {
+                        q.text = `Jarak ${loc[0]} ke ${loc[1]} adalah ${totalJarak} km. ${p[0]} berangkat dari ${loc[0]} pukul ${berangkat1} dengan kecepatan ${k1_4} km/jam. Pada pukul ${berangkat2}, ${p[1]} berangkat dari ${loc[1]} menuju ${loc[0]} dengan kecepatan ${k2_4} km/jam. Pukul berapa mereka akan berpapasan?`;
+                        q.options = genOptions(waktuKetemu4, [addMins(waktuKetemu4, 30), addMins(waktuKetemu4, -15), addMins(berangkat1, chosen.wSisaJam*60), addMins(waktuKetemu4, 45)]);
+                        q.explanation = `<b>Langkah 1:</b> Selisih waktu = ${chosen.bedaMenit} menit = ${selisihJam} jam.<br><b>Langkah 2:</b> Selisih Jarak (${p[0]} jalan duluan) = K1 × Selisih Waktu = ${k1_4} × ${selisihJam} = ${jarakAwal} km.<br><b>Langkah 3:</b> Sisa Jarak = Total Jarak - Selisih Jarak = ${totalJarak} - ${jarakAwal} = ${jarakSisa} km.<br><b>Langkah 4:</b> Waktu Bertemu = Sisa Jarak / (K1+K2) = ${jarakSisa} / ${k1_4+k2_4} = ${chosen.wSisaJam} jam.<br><b>Langkah 5:</b> Dihitung dari keberangkatan <b>orang KEDUA</b> (${berangkat2}) + ${chosen.wSisaJam} jam = <b>${waktuKetemu4}</b>.`;
+                    } else {
+                        let jarakDariA4 = k1_4 * (selisihJam + chosen.wSisaJam);
+                        q.text = `Jarak ${loc[0]} ke ${loc[1]} adalah ${totalJarak} km. ${p[0]} berangkat dari ${loc[0]} pukul ${berangkat1} (kecepatan ${k1_4} km/jam). Pukul ${berangkat2}, ${p[1]} berangkat dari ${loc[1]} (kecepatan ${k2_4} km/jam). Pada jarak berapa kilometer dari ${loc[0]} mereka berpapasan?`;
+                        q.options = genOptions(jarakDariA4, [jarakDariA4+15, k2_4 * chosen.wSisaJam, totalJarak/2, jarakDariA4-10], "km");
+                        q.explanation = `<b>Langkah 1:</b> Cari waktu bertemu seperti rumus berpapasan beda waktu. Didapat waktu bertemu (dari orang kedua) adalah ${chosen.wSisaJam} jam.<br><b>Langkah 2:</b> Jarak papasan dari tempat ${p[0]} berangkat = Kecepatan ${p[0]} × (Selisih waktu + Waktu bertemu).<br>Jarak = ${k1_4} × (${selisihJam} + ${chosen.wSisaJam}) = ${k1_4} × ${selisihJam + chosen.wSisaJam} = <b>${jarakDariA4} km</b>.`;
+                    }
+                    break;
+
+                case 5: // Menyusul
+                    let dif5 = rand(['Susah', 'HOTS 🔥']);
+                    q.difficulty = dif5;
+                    // Logic Menyusul: Waktu_nyusul = Selisih Jarak / (K2 - K1). Syarat: K2 > K1
+                    const setNyusul = [
+                        { k1: 40, k2: 60, bedaMenit: 30 }, // Jarak=20, Nyusul=20/(60-40)=1 jam
+                        { k1: 50, k2: 75, bedaMenit: 30 }, // Jarak=25, Nyusul=25/25 = 1 jam
+                        { k1: 60, k2: 80, bedaMenit: 15 }  // Jarak=15, Nyusul=15/20 = 45 menit (0.75 jam)
+                    ];
+                    let cn = rand(setNyusul);
+                    let kDpn = cn.k1, kBlk = cn.k2; 
+                    let bJam = cn.bedaMenit / 60;
+                    let selisihJ = kDpn * bJam; 
+                    let wNyusulJam = selisihJ / (kBlk - kDpn);
+                    
+                    let wDpn = `06:00`;
+                    let wBlk = addMins(wDpn, cn.bedaMenit);
+                    let wTersusul = addMins(wBlk, wNyusulJam * 60);
+
+                    if (dif5 === 'Susah') {
+                        q.text = `${p[0]} mengendarai ${veh[0]} dari ${loc[0]} dengan kecepatan ${kDpn} km/jam pada pukul ${wDpn}. Karena suatu hal, ${p[1]} menyusul menggunakan ${veh[1]} dengan kecepatan ${kBlk} km/jam dari tempat dan arah yang sama pada pukul ${wBlk}. Pukul berapa ${p[0]} dapat disusul?`;
+                        q.options = genOptions(wTersusul, [addMins(wTersusul, 30), addMins(wDpn, wNyusulJam*60), addMins(wTersusul, -15), addMins(wTersusul, 60)]);
+                        q.explanation = `<b>Langkah 1:</b> Selisih Waktu = ${cn.bedaMenit} menit = ${bJam} jam.<br><b>Langkah 2:</b> Selisih Jarak = Kecepatan Orang Pertama × Selisih Waktu = ${kDpn} × ${bJam} = ${selisihJ} km.<br><b>Langkah 3:</b> Waktu Menyusul = Selisih Jarak / (Kecepatan 2 - Kecepatan 1) = ${selisihJ} / (${kBlk} - ${kDpn}) = ${wNyusulJam} jam.<br><b>Langkah 4:</b> Pukul tersusul = Waktu berangkat KEDUA (${wBlk}) + ${wNyusulJam*60} menit = <b>${wTersusul}</b>.`;
+                    } else {
+                        let jarakNyusul = kBlk * wNyusulJam;
+                        q.text = `Pukul ${wDpn}, ${p[0]} berangkat dari ${loc[0]} dengan kecepatan ${kDpn} km/jam. Pada pukul ${wBlk}, ${p[1]} menyusul menggunakan jalur yang sama dengan kecepatan ${kBlk} km/jam. Berapa kilometer jarak yang ditempuh ${p[1]} saat berhasil menyusul ${p[0]}?`;
+                        q.options = genOptions(jarakNyusul, [jarakNyusul-10, jarakNyusul+20, kDpn * wNyusulJam, jarakNyusul+15], "km");
+                        q.explanation = `<b>Langkah 1:</b> Cari Waktu Menyusul = Selisih Jarak / (K2 - K1) = ${selisihJ} / ${kBlk-kDpn} = ${wNyusulJam} jam.<br><b>Langkah 2:</b> Jarak Menyusul = Kecepatan Orang Kedua × Waktu Menyusul = ${kBlk} × ${wNyusulJam} = <b>${jarakNyusul} km</b>.`;
+                    }
+                    break;
+                
+                case 6: // Kecepatan Rata-rata Pulang Pergi
+                    let dif6 = rand(['Sedang', 'HOTS 🔥']);
+                    q.difficulty = dif6;
+                    // Rumus: V = (2 * v1 * v2) / (v1 + v2). Angka harus bulat.
+                    const ppPairs = [
+                        {v1: 30, v2: 60, vAvg: 40}, 
+                        {v1: 40, v2: 60, vAvg: 48}, 
+                        {v1: 20, v2: 30, vAvg: 24}, 
+                        {v1: 60, v2: 90, vAvg: 72}
+                    ];
+                    let cp = rand(ppPairs);
+                    
+                    if (dif6 === 'Sedang') {
+                        q.text = `${p[0]} bepergian dari ${loc[0]} ke ${loc[1]} mengendarai mobil dengan kecepatan ${cp.v1} km/jam. Saat pulang melalui rute yang SAMA, lalu lintas sepi sehingga kecepatannya menjadi ${cp.v2} km/jam. Berapakah kecepatan rata-rata perjalanan Pulang-Pergi ${p[0]}?`;
+                        let fakeAvg = (cp.v1 + cp.v2) / 2; // Jebakan
+                        q.options = genOptions(cp.vAvg, [fakeAvg, cp.vAvg+2, cp.vAvg-4, fakeAvg-2], "km/jam");
+                        q.explanation = `<b>Awas Jebakan!</b> Kecepatan rata-rata PP <b>BUKAN</b> (V1 + V2) dibagi 2.<br><b>Rumus PP Jarak Sama:</b> V = (2 × V1 × V2) / (V1 + V2)<br>V = (2 × ${cp.v1} × ${cp.v2}) / (${cp.v1} + ${cp.v2}) = ${2*cp.v1*cp.v2} / ${cp.v1+cp.v2} = <b>${cp.vAvg} km/jam</b>.`;
+                    } else {
+                        // Variasi HOTS: Diberikan rata-rata, cari V2
+                        q.text = `${p[0]} melakukan perjalanan Pulang-Pergi. Saat berangkat ia memacu kendaraannya ${cp.v1} km/jam. Jika diketahui kecepatan rata-rata KESELURUHAN perjalanan Pulang-Perginya adalah ${cp.vAvg} km/jam, berapakah kecepatan ia saat kembali (arah pulang)?`;
+                        q.options = genOptions(cp.v2, [cp.v2-10, cp.v2+10, cp.vAvg+10, cp.v2+20], "km/jam");
+                        q.explanation = `<b>Rumus:</b> V_avg = (2 × V1 × V2) / (V1 + V2)<br>${cp.vAvg} = (2 × ${cp.v1} × V2) / (${cp.v1} + V2)<br>${cp.vAvg} × (${cp.v1} + V2) = ${2*cp.v1} × V2<br>${cp.vAvg*cp.v1} + ${cp.vAvg}V2 = ${2*cp.v1}V2<br>Pindah ruas dan kurangkan, didapat V2 = <b>${cp.v2} km/jam</b>.`;
+                    }
+                    break;
+            }
+            return q;
+        }
+
+        function initApp() {
+            const grid = document.getElementById('category-grid');
+            categories.forEach(c => {
+                const card = document.createElement('div');
+                let colorClass = c.isSpecial 
+                    ? 'bg-sky-50 border-sky-200' 
+                    : 'bg-white border-slate-200';
+                
+                card.className = `cat-card cursor-pointer border-2 rounded-xl p-5 relative ${colorClass}`;
+                card.onclick = () => selectCategory(c.id, card);
+                
+                card.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <div class="text-3xl bg-white p-2 rounded-lg shadow-sm border border-slate-100">${c.icon}</div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 ${c.isSpecial ? 'text-sky-600' : ''}">${c.title}</h3>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">${c.desc}</p>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function selectCategory(id, cardElem) {
+            document.querySelectorAll('.cat-card').forEach(el => el.classList.remove('selected'));
+            cardElem.classList.add('selected');
+            selectedCategoryId = id;
+
+            const startBtn = document.getElementById('start-btn');
+            startBtn.disabled = false;
+            startBtn.classList.remove('bg-slate-200', 'text-slate-500', 'cursor-not-allowed');
+            startBtn.classList.add('bg-sky-500', 'hover:bg-sky-600', 'text-white', 'shadow-md');
+            startBtn.innerText = "MULAI LATIHAN SEKARANG";
+        }
+
+        function startQuiz() {
+            timePerQuestion = parseInt(document.querySelector('input[name="timer"]:checked').value);
+            questions = [];
+            
+            for(let i=0; i<totalQuestions; i++) {
+                let catToGen = selectedCategoryId === 7 ? Math.floor(Math.random() * 6) + 1 : selectedCategoryId;
+                questions.push(createQuestion(catToGen));
+            }
+
+            currentIndex = 0;
+            score = 0;
+            userAnswers = [];
+
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('quiz-screen').classList.add('fade-in');
+            
+            let catName = categories.find(c => c.id === selectedCategoryId).title;
+            document.getElementById('quiz-category-title').innerText = `Kategori: ${catName}`;
+
+            renderQuestion();
+        }
+
+        function getDiffStyle(diff) {
+            if(diff === 'Mudah') return 'bg-emerald-100 text-emerald-700 border-emerald-200';
+            if(diff === 'Sedang') return 'bg-amber-100 text-amber-700 border-amber-200';
+            return 'bg-rose-100 text-rose-700 border-rose-200'; // Susah / HOTS
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            document.getElementById('question-counter').innerText = `SOAL ${currentIndex + 1}/${totalQuestions}`;
+            
+            const diffBadge = document.getElementById('difficulty-badge');
+            diffBadge.className = `text-xs font-bold px-3 py-1 rounded border ${getDiffStyle(q.difficulty)}`;
+            diffBadge.innerText = q.difficulty.toUpperCase();
+
+            document.getElementById('question-text').innerHTML = q.text;
+            
+            const optContainer = document.getElementById('options-container');
+            optContainer.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                const letter = String.fromCharCode(65 + idx);
+                btn.className = 'opt-btn w-full text-left p-4 border-2 border-slate-200 rounded-xl font-semibold text-slate-700 flex items-center gap-4 bg-white';
+                btn.innerHTML = `<span class="opt-letter w-8 h-8 rounded bg-slate-100 flex items-center justify-center font-bold text-slate-500 text-sm">${letter}</span> <span>${opt.text}</span>`;
+                btn.onclick = () => selectOption(btn, opt);
+                optContainer.appendChild(btn);
+            });
+
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = true;
+            nextBtn.className = 'w-full bg-slate-200 text-slate-400 font-bold py-4 rounded-xl cursor-not-allowed transition text-lg';
+            nextBtn.innerText = 'PILIH JAWABAN';
+
+            startTimer();
+        }
+
+        function selectOption(btnElement, optionData) {
+            document.querySelectorAll('.opt-btn').forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+            currentSelectedOption = optionData;
+
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = false;
+            nextBtn.className = 'w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-4 rounded-xl shadow-md transition transform active:scale-95 text-lg';
+            nextBtn.innerText = currentIndex === totalQuestions - 1 ? 'SELESAI & LIHAT HASIL' : 'SIMPAN JAWABAN & LANJUT';
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeRemaining = timePerQuestion;
+            updateTimerUI();
+
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerUI();
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    handleNext(true); 
+                }
+            }, 1000);
+        }
+
+        function updateTimerUI() {
+            const m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
+            const s = (timeRemaining % 60).toString().padStart(2, '0');
+            const box = document.getElementById('timer-box');
+            document.getElementById('timer-display').innerText = `${m}:${s}`;
+            
+            if(timeRemaining <= 10) {
+                box.classList.replace('bg-slate-100', 'bg-rose-100');
+                box.classList.replace('text-slate-700', 'text-rose-600');
+                box.classList.replace('border-slate-200', 'border-rose-200');
+            } else {
+                box.classList.replace('bg-rose-100', 'bg-slate-100');
+                box.classList.replace('text-rose-600', 'text-slate-700');
+                box.classList.replace('border-rose-200', 'border-slate-200');
+            }
+        }
+
+        function nextQuestion() { handleNext(false); }
+
+        function handleNext(isTimeout) {
+            clearInterval(timerInterval);
+
+            userAnswers.push({
+                qText: questions[currentIndex].text,
+                diff: questions[currentIndex].difficulty,
+                selected: isTimeout ? "Kosong (Waktu Habis)" : currentSelectedOption.text,
+                correct: questions[currentIndex].options.find(o => o.isCorrect).text,
+                isCorrect: currentSelectedOption ? currentSelectedOption.isCorrect : false,
+                explanation: questions[currentIndex].explanation
+            });
+
+            if (!isTimeout && currentSelectedOption && currentSelectedOption.isCorrect) score += 10; 
+
+            currentSelectedOption = null;
+            currentIndex++;
+
+            if (currentIndex < totalQuestions) {
+                const qs = document.getElementById('quiz-screen');
+                qs.classList.remove('fade-in');
+                void qs.offsetWidth; 
+                qs.classList.add('fade-in');
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            const res = document.getElementById('result-screen');
+            res.classList.remove('hidden');
+            res.classList.add('fade-in');
+
+            document.getElementById('final-score').innerText = score;
+            const correctCount = userAnswers.filter(a => a.isCorrect).length;
+            document.getElementById('result-summary').innerHTML = `Menjawab Benar: <b class="text-sky-300">${correctCount}</b> dari ${totalQuestions} Soal`;
+
+            const container = document.getElementById('review-container');
+            container.innerHTML = '';
+
+            userAnswers.forEach((ans, idx) => {
+                const isBenar = ans.isCorrect;
+                const div = document.createElement('div');
+                div.className = `p-5 rounded-xl border-2 bg-white ${isBenar ? 'border-emerald-200' : 'border-rose-200'}`;
+                
+                div.innerHTML = `
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <span class="bg-slate-800 text-white text-xs font-bold px-2 py-1 rounded">SOAL ${idx+1}</span>
+                        <span class="text-xs font-bold px-2 py-1 rounded border ${getDiffStyle(ans.diff)}">${ans.diff.toUpperCase()}</span>
+                        <span class="text-xs font-bold px-2 py-1 rounded border ${isBenar ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'} ml-auto">
+                            ${isBenar ? 'BENAR' : 'SALAH'}
+                        </span>
+                    </div>
+                    <p class="text-slate-800 font-medium mb-4 text-sm">${ans.qText}</p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-3 mb-4">
+                        <div class="flex-1 p-3 bg-slate-50 border border-slate-200 rounded">
+                            <span class="block text-xs text-slate-500 mb-1">Jawaban Anda:</span>
+                            <span class="font-bold text-sm ${isBenar ? 'text-emerald-600' : 'text-rose-600'}">${ans.selected}</span>
+                        </div>
+                        <div class="flex-1 p-3 bg-slate-50 border border-slate-200 rounded">
+                            <span class="block text-xs text-slate-500 mb-1">Kunci Jawaban:</span>
+                            <span class="font-bold text-sm text-emerald-600">${ans.correct}</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded border border-blue-100">
+                        <p class="font-bold text-slate-800 mb-2 text-sm">Pembahasan Singkat:</p>
+                        <div class="text-slate-700 text-sm leading-relaxed">${ans.explanation}</div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function resetApp() {
+            document.getElementById('result-screen').classList.add('hidden');
+            const home = document.getElementById('home-screen');
+            home.classList.remove('hidden');
+            void home.offsetWidth; 
+            home.classList.add('fade-in');
+        }
+
+        window.onload = () => { initApp(); };
+    </script>
+</body>
+</html>

@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master TIU - Perbandingan & Rasio</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
+                    colors: {
+                        primary: '#4f46e5', // Indigo 600
+                        secondary: '#0d9488', // Teal 600
+                        accent: '#f59e0b', // Amber 500
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { 
+            background-color: #f0fdfa; /* Teal 50 */
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .timer-pulse { animation: pulseRed 1s infinite; }
+        @keyframes pulseRed {
+            0%, 100% { color: #e11d48; }
+            50% { color: #fda4af; }
+        }
+
+        /* Interactive Cards */
+        .select-card { transition: all 0.2s ease; border: 2px solid #e2e8f0; }
+        .select-card:hover { border-color: #818cf8; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.1); }
+        .select-card.active, input[type="radio"]:checked + .select-card { 
+            border-color: #4f46e5; background-color: #eef2ff; 
+        }
+
+        .opt-btn { transition: all 0.2s ease; border: 2px solid #e2e8f0; }
+        .opt-btn:hover:not(:disabled) { border-color: #5eead4; background-color: #f0fdfa; }
+        .opt-btn.selected { border-color: #0d9488; background-color: #ccfbf1; color: #0f766e; }
+        .opt-btn.selected .opt-label { background-color: #0d9488; color: white; }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex justify-center items-center py-6 px-4 sm:px-6">
+
+    <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden relative border border-slate-100">
+        
+        <!-- HEADER -->
+        <div class="bg-gradient-to-r from-primary to-indigo-800 text-white p-6 sm:p-8 text-center relative">
+            <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmYiLz48L3N2Zz4=')]"></div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight relative z-10">
+                Tryout TIU: Perbandingan & Rasio
+            </h1>
+            <p class="text-indigo-200 mt-2 text-sm sm:text-base font-medium relative z-10">Latihan Soal Dinamis (100% Angka Bulat)</p>
+        </div>
+
+        <!-- 1. START SCREEN -->
+        <div id="home-screen" class="p-6 sm:p-8 fade-in">
+            <!-- Pilihan Waktu -->
+            <div class="mb-8">
+                <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
+                    <span class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-lg flex items-center justify-center">1</span> 
+                    Pilih Waktu per Soal
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="timer" value="60" class="peer sr-only" checked onchange="updateStartBtn()">
+                        <div class="select-card p-4 rounded-xl text-center h-full flex flex-col justify-center">
+                            <span class="block text-lg font-bold text-slate-700">60 Detik</span>
+                            <span class="inline-block mt-1 text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-1 rounded mx-auto uppercase">Simulasi</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="timer" value="90" class="peer sr-only" onchange="updateStartBtn()">
+                        <div class="select-card p-4 rounded-xl text-center h-full flex flex-col justify-center">
+                            <span class="block text-lg font-bold text-slate-700">90 Detik</span>
+                            <span class="inline-block mt-1 text-[10px] font-medium text-slate-500 uppercase">Standar</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="timer" value="120" class="peer sr-only" onchange="updateStartBtn()">
+                        <div class="select-card p-4 rounded-xl text-center h-full flex flex-col justify-center">
+                            <span class="block text-lg font-bold text-slate-700">120 Detik</span>
+                            <span class="inline-block mt-1 text-[10px] font-medium text-slate-500 uppercase">Santai</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="timer" value="0" class="peer sr-only" onchange="updateStartBtn()">
+                        <div class="select-card p-4 rounded-xl text-center h-full flex flex-col justify-center">
+                            <span class="block text-lg font-bold text-slate-700">Tanpa Waktu</span>
+                            <span class="inline-block mt-1 text-[10px] font-bold bg-secondary text-white px-2 py-1 rounded mx-auto uppercase">Latihan Bebas</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Pilihan Kategori -->
+            <div class="mb-8">
+                <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
+                    <span class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-lg flex items-center justify-center">2</span> 
+                    Pilih Kategori Topik (10 Soal)
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="category-grid">
+                    <!-- Digenerate via JS -->
+                </div>
+            </div>
+
+            <button onclick="startQuiz()" id="start-btn" class="w-full bg-slate-200 text-slate-400 font-bold py-4 rounded-xl transition text-lg cursor-not-allowed uppercase tracking-wide" disabled>
+                Pilih Topik Terlebih Dahulu
+            </button>
+        </div>
+
+        <!-- 2. QUIZ SCREEN -->
+        <div id="quiz-screen" class="p-6 sm:p-8 hidden flex-col min-h-[500px]">
+            <!-- Header Kuis -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-2 border-slate-100 pb-4 mb-5 gap-4">
+                <div>
+                    <div class="flex items-center gap-3 mb-1">
+                        <span id="q-counter" class="bg-primary text-white text-xs font-bold px-3 py-1.5 rounded-md tracking-wider">SOAL 1/10</span>
+                        <span id="q-diff" class="text-xs font-bold px-3 py-1.5 rounded-md border">SEDANG</span>
+                    </div>
+                    <p id="q-category" class="text-xs text-slate-500 font-medium">Topik: Campuran</p>
+                </div>
+                <!-- Box Timer -->
+                <div id="timer-wrapper">
+                    <div id="timer-box" class="flex items-center gap-2 bg-slate-50 border-2 border-slate-200 text-slate-700 px-4 py-2 rounded-lg font-bold transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <span id="timer-display" class="text-xl tabular-nums tracking-wider">01:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Area Soal -->
+            <div class="mb-6 flex-grow flex flex-col">
+                <div class="bg-white p-5 sm:p-6 rounded-2xl border-2 border-indigo-50 shadow-sm mb-6 text-slate-800 text-lg leading-relaxed font-medium" id="question-text">
+                    <!-- Teks soal -->
+                </div>
+                <div id="options-container" class="space-y-3 mt-auto">
+                    <!-- Opsi Jawaban -->
+                </div>
+            </div>
+
+            <button id="next-btn" onclick="submitAnswer()" class="w-full bg-slate-200 text-slate-400 font-bold py-4 rounded-xl cursor-not-allowed transition text-lg tracking-wide" disabled>
+                PILIH JAWABAN TERLEBIH DAHULU
+            </button>
+        </div>
+
+        <!-- 3. RESULT SCREEN -->
+        <div id="result-screen" class="p-6 sm:p-8 hidden bg-slate-50">
+            <div class="text-center mb-8 bg-white border-2 border-slate-100 rounded-3xl p-8 shadow-sm">
+                <h2 class="text-xl font-bold text-slate-500 mb-2 uppercase tracking-widest">Skor Akhir</h2>
+                <div class="text-6xl font-extrabold text-primary my-2" id="final-score">100</div>
+                <p id="result-summary" class="text-slate-600 font-medium text-lg mt-4 bg-slate-100 inline-block px-4 py-2 rounded-lg">
+                    Benar: 10 | Salah: 0
+                </p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="font-bold text-xl mb-4 text-slate-800 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Pembahasan Detail
+                </h3>
+                <div id="review-container" class="space-y-4">
+                    <!-- Review Item -->
+                </div>
+            </div>
+
+            <button onclick="resetApp()" class="w-full bg-primary hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg transition text-lg mt-6 uppercase tracking-wide">
+                Latihan Lagi
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN LOGIC -->
+    <script>
+        const names = ["Andi", "Budi", "Citra", "Denis", "Eka", "Fahmi", "Gita", "Hadi", "Iwan", "Joko"];
+        const objects = ["buku tulis", "pensil", "baju", "sepatu", "tas", "kalkulator"];
+        
+        const topics = [
+            { id: 1, title: "Perbandingan Senilai", desc: "Kasus harga barang & mesin produksi.", icon: "📈" },
+            { id: 2, title: "Berbalik Nilai", desc: "Kasus pekerja bangunan & persediaan makanan.", icon: "📉" },
+            { id: 3, title: "Rasio & Proporsi", desc: "Kasus rasio uang & umur (masa lalu/depan).", icon: "⚖️" },
+            { id: 4, title: "Campuran (Tryout)", desc: "10 Soal acak dari semua kategori (Rekomendasi).", icon: "🔥", special: true }
+        ];
+
+        let selectedTopicId = null;
+        let timePerQuestion = 60;
+        let questions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+        let timerInterval;
+        let timeRemaining = 0;
+        let currentSelectedOption = null;
+
+        // Helpers
+        const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+        const getTwo = (arr) => { let a = rand(arr), b = rand(arr); while (a === b) b = rand(arr); return [a, b]; };
+        
+        // Generator Distractor (Jawaban Pengecoh)
+        const genOptions = (correct, unit = "") => {
+            let ops = new Set([correct]);
+            // Membuat variasi pengecoh yang masuk akal
+            let offsets = [+1, -1, +2, -2, +5, -5, +10, -10, correct*2, Math.floor(correct/2), correct+4];
+            
+            while(ops.size < 5) {
+                let offset = rand(offsets);
+                let fake = correct + offset;
+                if(fake > 0 && fake !== correct && Number.isInteger(fake)) {
+                    ops.add(fake);
+                }
+            }
+            
+            return Array.from(ops).map(x => ({
+                text: `${x}${unit ? ' ' + unit : ''}`,
+                isCorrect: x === correct
+            })).sort(() => Math.random() - 0.5); // Shuffle
+        };
+
+        function genSenilai() {
+            let type = rand([1, 2]); // 1: Harga/Barang, 2: Mesin (HOTS)
+            let q = { category: 'Perbandingan Senilai' };
+            
+            if (type === 1) {
+                q.difficulty = 'Sedang';
+                let obj = rand(objects);
+                let unitPrice = rand([2500, 3000, 4500, 5000, 7500, 12000]);
+                let q1 = rand([3, 4, 5, 6]);
+                let p1 = q1 * unitPrice;
+                let q2 = rand([7, 8, 9, 12, 15]);
+                while(q1 === q2) q2 = rand([7, 8, 9, 12, 15]);
+                let p2 = q2 * unitPrice;
+
+                q.text = `Harga ${q1} buah ${obj} adalah Rp ${p1.toLocaleString('id-ID')}. Jika ${rand(names)} ingin membeli ${q2} buah ${obj} yang sama, berapa uang yang harus ia bayarkan?`;
+                q.options = genOptions(p2).map(o => ({...o, text: `Rp ${parseInt(o.text).toLocaleString('id-ID')}`}));
+                q.explanation = `<b>Langkah Penyelesaian:</b><br>Ini adalah perbandingan senilai (makin banyak barang, makin mahal).<br>Harga 1 ${obj} = Rp ${p1.toLocaleString('id-ID')} / ${q1} = Rp ${unitPrice.toLocaleString('id-ID')}.<br>Harga ${q2} ${obj} = ${q2} × Rp ${unitPrice.toLocaleString('id-ID')} = <b>Rp ${p2.toLocaleString('id-ID')}</b>.`;
+            
+            } else {
+                q.difficulty = 'HOTS 🔥';
+                let m1 = rand([4, 5, 6]); // Mesin awal
+                let p_per_m = rand([10, 20, 25, 50]); // produksi per mesin per jam
+                let t1 = rand([3, 4, 5]); // waktu awal
+                let totalProd = m1 * p_per_m * t1; 
+                
+                let t2 = rand([1, 2]); // waktu baru yang lebih singkat
+                
+                // Memastikan mesin target bulat (targetMesin = targetProd / (p_per_m * t2))
+                // Pilih targetMesin yg lebih besar dari m1
+                let targetMesin = m1 + rand([2, 3, 4, 5]);
+                let targetProd = targetMesin * p_per_m * t2; // ini pasti menghasilkan angka bulat
+                
+                q.text = `Sebuah pabrik menggunakan ${m1} unit mesin untuk memproduksi ${totalProd} barang dalam waktu ${t1} jam. Jika pabrik tersebut mendapat pesanan ${targetProd} barang dan harus diselesaikan dalam waktu ${t2} jam, berapakah <b>tambahan</b> mesin yang diperlukan? (Anggap kecepatan semua mesin sama)`;
+                
+                let tambahan = targetMesin - m1;
+                let ops = genOptions(tambahan, "unit");
+                // Sisipkan jebakan jika mereka lupa mengurang (menjawab total mesin)
+                if(!ops.find(o => o.text === `${targetMesin} unit`)) {
+                    // Cari index opsi yang salah untuk diganti dengan jebakan, agar tidak menimpa jawaban benar
+                    let fakeIdx = ops.findIndex(o => !o.isCorrect);
+                    ops[fakeIdx] = {text: `${targetMesin} unit`, isCorrect: false}; 
+                }
+
+                q.options = ops.sort(() => Math.random() - 0.5);
+                q.explanation = `<b>Langkah Penyelesaian:</b><br>1. Kecepatan 1 mesin = ${totalProd} barang / (${m1} mesin × ${t1} jam) = ${p_per_m} barang/jam.<br>2. Total mesin untuk pesanan baru = Target Barang / (Kecepatan × Waktu Baru) <br>&nbsp;&nbsp;&nbsp;= ${targetProd} / (${p_per_m} × ${t2}) = ${targetMesin} mesin.<br>3. <b>Hati-hati (HOTS):</b> Yang ditanyakan adalah <b>tambahan</b> mesin.<br>&nbsp;&nbsp;&nbsp;Tambahan = ${targetMesin} mesin - ${m1} mesin awal = <b>${tambahan} unit</b>.`;
+            }
+            return q;
+        }
+
+        function genBerbalik() {
+            let type = rand([1, 2, 3]); // 1: Biasa, 2: Makanan, 3: HOTS Terhenti
+            let q = { category: 'Berbalik Nilai' };
+
+            if (type === 1) {
+                q.difficulty = 'Sedang';
+                let p1 = rand([10, 12, 15, 20]); // pekerja
+                let w1 = rand([20, 30, 40]); // hari
+                let totalKerja = p1 * w1;
+                // Pilih p2 agar habis dibagi
+                let p2Options = [5, 6, 8, 10, 12, 15, 20, 24, 25, 30].filter(x => totalKerja % x === 0 && x !== p1);
+                let p2 = rand(p2Options);
+                let w2 = totalKerja / p2;
+
+                q.text = `Suatu pekerjaan pembangunan jembatan dapat diselesaikan oleh ${p1} orang pekerja dalam waktu ${w1} hari. Jika pekerjaan tersebut hanya dikerjakan oleh ${p2} orang, maka pekerjaan tersebut akan selesai dalam waktu ...`;
+                q.options = genOptions(w2, "hari");
+                q.explanation = `<b>Langkah Penyelesaian:</b><br>Perbandingan Berbalik Nilai (Pekerja × Waktu = Konstan/Total Beban Kerja).<br>Beban Total = ${p1} orang × ${w1} hari = ${totalKerja} bagian.<br>Waktu baru = Beban Total / Pekerja Baru = ${totalKerja} / ${p2} = <b>${w2} hari</b>.`;
+            
+            } else if (type === 2) {
+                q.difficulty = 'Sulit';
+                // Makanan (Orang bertambah) - pastikan angka bulat menggunakan bottom up
+                let p1 = rand([20, 30, 40]); // jumlah orang awal
+                let addP = rand([10, 20]); // tambahan orang
+                let p2 = p1 + addP; // jumlah orang setelah ditambah
+                
+                // Cari hari kedua (w2) yg membuat (w2 * p2) bisa dibagi p1
+                let w2 = rand([15, 21, 24, 30]); 
+                while((w2 * p2) % p1 !== 0) { w2++; }
+                
+                let totalPorsi = w2 * p2;
+                let w1 = totalPorsi / p1; // hari pertama
+
+                q.text = `Di sebuah asrama TNI, tersedia beras yang cukup untuk ${p1} orang selama ${w1} hari. Jika tiba-tiba ada tambahan ${addP} orang penghuni baru yang bergabung, maka persediaan beras itu akan habis dalam waktu ...`;
+                q.options = genOptions(w2, "hari");
+                q.explanation = `<b>Langkah Penyelesaian:</b><br>Makin banyak orang, makin cepat habis (Berbalik Nilai).<br>Total Porsi = ${p1} orang × ${w1} hari = ${totalPorsi} porsi.<br>Jumlah orang sekarang = ${p1} + ${addP} = ${p2} orang.<br>Waktu beras habis = Total Porsi / Orang Sekarang = ${totalPorsi} / ${p2} = <b>${w2} hari</b>.`;
+            
+            } else {
+                q.difficulty = 'HOTS 🔥';
+                // Proyek terhenti (Fixed set pre-calculated untuk jaminan 100% bulat)
+                const hotsSets = [
+                    {rencanaH: 30, pekerja: 20, kerjaH: 10, hentiH: 4}, // sisaN=20, beban=400, sisaB=16, butuh=25, tmb=5
+                    {rencanaH: 40, pekerja: 15, kerjaH: 10, hentiH: 5}, // sisaN=30, beban=450, sisaB=25, butuh=18, tmb=3
+                    {rencanaH: 25, pekerja: 16, kerjaH: 5,  hentiH: 4}, // sisaN=20, beban=320, sisaB=16, butuh=20, tmb=4
+                    {rencanaH: 50, pekerja: 30, kerjaH: 10, hentiH: 10} // sisaN=40, beban=1200, sisaB=30, butuh=40, tmb=10
+                ];
+                let set = rand(hotsSets);
+                let sisaWaktuNormal = set.rencanaH - set.kerjaH;
+                let sisaBeban = sisaWaktuNormal * set.pekerja;
+                let sisaWaktuBaru = sisaWaktuNormal - set.hentiH;
+                let pekerjaDibutuhkan = sisaBeban / sisaWaktuBaru;
+                let tambahan = pekerjaDibutuhkan - set.pekerja;
+
+                let ops = genOptions(tambahan, "orang");
+                // Jebakan: Total pekerja dibutuhkan
+                if(!ops.find(o => o.text === `${pekerjaDibutuhkan} orang`)) {
+                    // Cari index opsi yang salah untuk diganti dengan jebakan
+                    let fakeIdx = ops.findIndex(o => !o.isCorrect);
+                    ops[fakeIdx] = {text: `${pekerjaDibutuhkan} orang`, isCorrect: false}; 
+                }
+                
+                q.options = ops.sort(() => Math.random() - 0.5);
+                q.explanation = `<b>Langkah Penyelesaian (Konsep Sisa Pekerjaan):</b><br>1. Sisa hari normal = ${set.rencanaH} - ${set.kerjaH} = ${sisaWaktuNormal} hari.<br>2. Sisa beban kerja = ${sisaWaktuNormal} hari × ${set.pekerja} orang = ${sisaBeban} bagian.<br>3. Sisa hari karena libur = ${sisaWaktuNormal} - ${set.hentiH} = ${sisaWaktuBaru} hari.<br>4. Total pekerja dibutuhkan = ${sisaBeban} bagian / ${sisaWaktuBaru} hari = ${pekerjaDibutuhkan} orang.<br>5. <b>Tambahan pekerja</b> = ${pekerjaDibutuhkan} orang - ${set.pekerja} orang = <b>${tambahan} orang</b>.`;
+            }
+            return q;
+        }
+
+        function genRasio() {
+            let type = rand([1, 2]); // 1: Uang, 2: Umur
+            let q = { category: 'Rasio & Proporsi' };
+            let p = getTwo(names);
+
+            if(type === 1) {
+                q.difficulty = 'Sedang';
+                let r1 = rand([2, 3, 4]);
+                let r2 = rand([5, 6, 7]);
+                while(r1 >= r2) r2++; // pastikan r2 lebih besar
+                
+                let multiplier = rand([5000, 10000, 15000, 20000]);
+                let uangA = r1 * multiplier;
+                let uangB = r2 * multiplier;
+                let selisih = uangB - uangA;
+                let total = uangA + uangB;
+
+                let isDiketahuiSelisih = Math.random() > 0.5;
+
+                if (isDiketahuiSelisih) {
+                    q.text = `Perbandingan uang ${p[0]} dan ${p[1]} adalah ${r1} : ${r2}. Jika selisih uang mereka berdua adalah Rp ${selisih.toLocaleString('id-ID')}, berapakah jumlah total uang mereka?`;
+                    q.options = genOptions(total).map(o => ({...o, text: `Rp ${parseInt(o.text).toLocaleString('id-ID')}`}));
+                    q.explanation = `<b>Rumus Cepat:</b> (Rasio Ditanya / Rasio Diketahui) × Nilai Diketahui<br>Rasio Jumlah (Ditanya) = ${r1} + ${r2} = ${r1+r2}.<br>Rasio Selisih (Diketahui) = ${r2} - ${r1} = ${r2-r1}.<br>Jumlah Total Uang = (${r1+r2} / ${r2-r1}) × Rp ${selisih.toLocaleString('id-ID')} = <b>Rp ${total.toLocaleString('id-ID')}</b>.`;
+                } else {
+                    q.text = `Perbandingan uang ${p[0]} dan ${p[1]} adalah ${r1} : ${r2}. Jika jumlah uang mereka berdua Rp ${total.toLocaleString('id-ID')}, berapakah uang yang dimiliki ${p[0]}?`;
+                    q.options = genOptions(uangA).map(o => ({...o, text: `Rp ${parseInt(o.text).toLocaleString('id-ID')}`}));
+                    q.explanation = `Rasio Jumlah = ${r1} + ${r2} = ${r1+r2}.<br>Uang ${p[0]} = (Rasio ${p[0]} / Rasio Total) × Total Uang<br>= (${r1} / ${r1+r2}) × Rp ${total.toLocaleString('id-ID')} = <b>Rp ${uangA.toLocaleString('id-ID')}</b>.`;
+                }
+            } else {
+                q.difficulty = 'HOTS 🔥';
+                // Umur (Masa lalu & masa depan) - Semua diset agar angkanya rasional dan bulat
+                let xLalu = rand([3, 4, 5]);
+                let rA = rand([1, 2, 3]);
+                let rB = rand([4, 5]); 
+                let unit = rand([4, 5, 6]); // pengali (X)
+                
+                let umurA_Lalu = rA * unit;
+                let umurB_Lalu = rB * unit;
+                
+                let umurA_Skg = umurA_Lalu + xLalu;
+                let umurB_Skg = umurB_Lalu + xLalu;
+                let totalSkg = umurA_Skg + umurB_Skg;
+                
+                let yDepan = rand([3, 4, 5]);
+                let ditanya = rand(['A', 'B']);
+                let ans = ditanya === 'A' ? umurA_Skg + yDepan : umurB_Skg + yDepan;
+                let namaDitanya = ditanya === 'A' ? p[0] : p[1];
+
+                q.text = `${xLalu} tahun yang lalu, perbandingan umur ${p[0]} dan ${p[1]} adalah ${rA} : ${rB}. Jika jumlah umur mereka saat ini adalah ${totalSkg} tahun, berapakah umur ${namaDitanya} pada ${yDepan} tahun yang akan datang?`;
+                q.options = genOptions(ans, "tahun");
+                q.explanation = `<b>Langkah Penyelesaian:</b><br>1. Misalkan umur ${xLalu} tahun lalu: ${p[0]} = ${rA}x, ${p[1]} = ${rB}x.<br>2. Umur sekarang: ${p[0]} = ${rA}x + ${xLalu}, ${p[1]} = ${rB}x + ${xLalu}.<br>3. Total sekarang = (${rA}x + ${xLalu}) + (${rB}x + ${xLalu}) = ${totalSkg}<br>&nbsp;&nbsp;&nbsp;${rA+rB}x + ${xLalu*2} = ${totalSkg} ➜ ${rA+rB}x = ${totalSkg - (xLalu*2)} ➜ x = ${unit}.<br>4. Umur ${namaDitanya} sekarang = ${(ditanya === 'A' ? rA : rB) * unit + xLalu} tahun.<br>5. Umur ${namaDitanya} ${yDepan} th lagi = ${(ditanya === 'A' ? rA : rB) * unit + xLalu} + ${yDepan} = <b>${ans} tahun</b>.`;
+            }
+            return q;
+        }
+
+        function initApp() {
+            const grid = document.getElementById('category-grid');
+            topics.forEach(t => {
+                const label = document.createElement('label');
+                label.className = "cursor-pointer h-full block";
+                label.innerHTML = `
+                    <input type="radio" name="topic" value="${t.id}" class="peer sr-only" onchange="selectCategory(${t.id})">
+                    <div class="select-card p-4 rounded-xl h-full flex items-start gap-4 bg-white">
+                        <div class="text-3xl bg-slate-50 p-2 rounded-xl border border-slate-100">${t.icon}</div>
+                        <div class="text-left">
+                            <h3 class="font-bold text-slate-800 ${t.special ? 'text-primary' : ''}">${t.title}</h3>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed font-medium">${t.desc}</p>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(label);
+            });
+        }
+
+        function selectCategory(id) {
+            selectedTopicId = id;
+            updateStartBtn();
+        }
+
+        function updateStartBtn() {
+            const startBtn = document.getElementById('start-btn');
+            if(selectedTopicId) {
+                startBtn.disabled = false;
+                startBtn.className = 'w-full bg-primary hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-[0.98] text-lg uppercase tracking-wide';
+                startBtn.innerText = "Mulai Ujian Sekarang";
+            }
+        }
+
+        function startQuiz() {
+            const timerVal = parseInt(document.querySelector('input[name="timer"]:checked').value);
+            timePerQuestion = timerVal; // 0 artinya tanpa waktu
+            questions = [];
+            
+            for(let i=0; i<10; i++) {
+                let catToGen = selectedTopicId === 4 ? rand([1,2,3]) : selectedTopicId;
+                if(catToGen === 1) questions.push(genSenilai());
+                else if(catToGen === 2) questions.push(genBerbalik());
+                else questions.push(genRasio());
+            }
+
+            currentIndex = 0; 
+            score = 0; 
+            userAnswers = [];
+            
+            document.getElementById('home-screen').classList.add('hidden');
+            const quizScreen = document.getElementById('quiz-screen');
+            quizScreen.classList.remove('hidden');
+            quizScreen.classList.add('fade-in');
+            
+            document.getElementById('q-category').innerText = `Topik: ${topics.find(t=>t.id===selectedTopicId).title}`;
+            renderQuestion();
+        }
+
+        function getDiffStyle(diff) {
+            if(diff === 'Sedang') return 'bg-sky-100 text-sky-700 border-sky-200';
+            if(diff === 'Sulit') return 'bg-amber-100 text-amber-700 border-amber-200';
+            return 'bg-rose-100 text-rose-700 border-rose-200'; // HOTS
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            document.getElementById('q-counter').innerText = `SOAL ${currentIndex + 1}/10`;
+            
+            const diffBadge = document.getElementById('q-diff');
+            diffBadge.className = `text-xs font-bold px-3 py-1.5 rounded-md border ${getDiffStyle(q.difficulty)}`;
+            diffBadge.innerText = q.difficulty.toUpperCase();
+
+            document.getElementById('question-text').innerHTML = q.text;
+            
+            const optContainer = document.getElementById('options-container');
+            optContainer.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                const letter = String.fromCharCode(65 + idx);
+                btn.className = 'opt-btn w-full text-left p-4 rounded-xl font-semibold text-slate-700 flex items-center gap-4 bg-white shadow-sm';
+                btn.innerHTML = `<span class="opt-label w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center font-bold text-slate-500 text-sm transition-colors">${letter}</span> <span class="flex-1">${opt.text}</span>`;
+                btn.onclick = () => selectOption(btn, opt);
+                optContainer.appendChild(btn);
+            });
+
+            // Kunci tombol "Lanjutkan" sebelum memilih
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = true;
+            nextBtn.className = 'w-full bg-slate-200 text-slate-400 font-bold py-4 rounded-xl cursor-not-allowed transition text-lg tracking-wide';
+            nextBtn.innerText = 'PILIH JAWABAN TERLEBIH DAHULU';
+
+            currentSelectedOption = null;
+            startTimer();
+        }
+
+        function selectOption(btnElement, optionData) {
+            document.querySelectorAll('.opt-btn').forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+            currentSelectedOption = optionData;
+
+            // Buka tombol "Lanjutkan"
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = false;
+            nextBtn.className = 'w-full bg-secondary hover:bg-teal-700 text-white font-bold py-4 rounded-xl shadow-md transition transform active:scale-[0.98] text-lg uppercase tracking-wide';
+            nextBtn.innerText = currentIndex === 9 ? 'Selesai & Lihat Skor' : 'Kunci Jawaban & Lanjut';
+        }
+
+        function startTimer() {
+            // Bersihkan interval sebelumnya dengan aman
+            if(timerInterval) {
+                clearInterval(timerInterval);
+            }
+
+            const timerWrapper = document.getElementById('timer-wrapper');
+            const display = document.getElementById('timer-display');
+            const box = document.getElementById('timer-box');
+
+            // Logika Tanpa Waktu
+            if (timePerQuestion === 0) {
+                timerWrapper.classList.add('hidden'); // Sembunyikan timer
+                return; 
+            }
+
+            timerWrapper.classList.remove('hidden');
+            timeRemaining = timePerQuestion;
+            updateTimerUI(display, box);
+
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerUI(display, box);
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    handleNext(true); // Auto-next jika waktu habis
+                }
+            }, 1000);
+        }
+
+        function updateTimerUI(display, box) {
+            const m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
+            const s = (timeRemaining % 60).toString().padStart(2, '0');
+            display.innerText = `${m}:${s}`;
+            
+            if(timeRemaining <= 10) {
+                display.classList.add('timer-pulse');
+                box.classList.replace('border-slate-200', 'border-rose-300');
+            } else {
+                display.classList.remove('timer-pulse');
+                display.style.color = 'inherit';
+                box.classList.replace('border-rose-300', 'border-slate-200');
+            }
+        }
+
+        function submitAnswer() { 
+            // Validasi tambahan jika tombol di-hack/bypass
+            if (!currentSelectedOption) {
+                alert("Peringatan: Silakan pilih salah satu jawaban terlebih dahulu sebelum melanjutkan!");
+                return;
+            }
+            handleNext(false); 
+        }
+
+        function handleNext(isTimeout) {
+            // Hentikan timer dengan pasti
+            if(timerInterval) clearInterval(timerInterval);
+
+            let correctOpt = questions[currentIndex].options.find(o => o.isCorrect);
+            let isBenar = (!isTimeout && currentSelectedOption && currentSelectedOption.isCorrect);
+            
+            userAnswers.push({
+                qText: questions[currentIndex].text,
+                diff: questions[currentIndex].difficulty,
+                selected: isTimeout ? "WAKTU HABIS" : currentSelectedOption.text,
+                correct: correctOpt.text,
+                isCorrect: isBenar,
+                explanation: questions[currentIndex].explanation
+            });
+
+            if (isBenar) score += 10; 
+
+            currentIndex++;
+            if (currentIndex < 10) {
+                const qs = document.getElementById('quiz-screen');
+                qs.classList.remove('fade-in'); void qs.offsetWidth; qs.classList.add('fade-in');
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            const res = document.getElementById('result-screen');
+            res.classList.remove('hidden');
+            res.classList.add('fade-in');
+
+            document.getElementById('final-score').innerText = score;
+            const correctCount = userAnswers.filter(a => a.isCorrect).length;
+            document.getElementById('result-summary').innerHTML = `Benar: <b class="text-secondary">${correctCount}</b> &nbsp;|&nbsp; Salah: <b class="text-rose-500">${10 - correctCount}</b>`;
+
+            const container = document.getElementById('review-container');
+            container.innerHTML = '';
+
+            userAnswers.forEach((ans, idx) => {
+                const div = document.createElement('div');
+                div.className = `p-5 sm:p-6 rounded-2xl border-2 bg-white ${ans.isCorrect ? 'border-teal-200' : 'border-rose-200'} shadow-sm relative overflow-hidden`;
+                
+                div.innerHTML += `<div class="absolute left-0 top-0 bottom-0 w-2 ${ans.isCorrect ? 'bg-teal-400' : 'bg-rose-400'}"></div>`;
+                
+                div.innerHTML += `
+                    <div class="flex flex-wrap items-center gap-2 mb-3 pl-2">
+                        <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2 py-1 rounded">SOAL ${idx+1}</span>
+                        <span class="text-xs font-bold px-2 py-1 rounded border ${getDiffStyle(ans.diff)}">${ans.diff.toUpperCase()}</span>
+                        <span class="text-xs font-bold px-3 py-1 rounded-full ml-auto ${ans.isCorrect ? 'bg-teal-100 text-teal-700' : 'bg-rose-100 text-rose-700'}">
+                            ${ans.isCorrect ? '✓ BENAR' : '✗ SALAH'}
+                        </span>
+                    </div>
+                    <p class="text-slate-800 font-medium mb-5 text-[15px] pl-2">${ans.qText}</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5 pl-2">
+                        <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                            <span class="block text-[11px] text-slate-500 mb-1 uppercase font-semibold">Jawaban Anda</span>
+                            <span class="font-bold text-sm ${ans.isCorrect ? 'text-teal-600' : 'text-rose-600'}">${ans.selected}</span>
+                        </div>
+                        <div class="p-3 bg-teal-50 border border-teal-100 rounded-lg">
+                            <span class="block text-[11px] text-teal-600 mb-1 uppercase font-semibold">Kunci Jawaban</span>
+                            <span class="font-bold text-sm text-teal-700">${ans.correct}</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 ml-2">
+                        <p class="font-bold text-primary mb-2 text-sm flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Penjelasan
+                        </p>
+                        <div class="text-slate-700 text-[14px] leading-relaxed">${ans.explanation}</div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function resetApp() {
+            document.getElementById('result-screen').classList.add('hidden');
+            const home = document.getElementById('home-screen');
+            home.classList.remove('hidden');
+            void home.offsetWidth; 
+            home.classList.add('fade-in');
+            
+            // Uncheck visual selection
+            document.querySelectorAll('input[name="topic"]').forEach(r => r.checked = false);
+            selectedTopicId = null;
+            
+            const startBtn = document.getElementById('start-btn');
+            startBtn.disabled = true;
+            startBtn.className = 'w-full bg-slate-200 text-slate-400 font-bold py-4 rounded-xl cursor-not-allowed transition text-lg uppercase tracking-wide';
+            startBtn.innerText = 'Pilih Topik Terlebih Dahulu';
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
