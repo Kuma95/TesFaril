@@ -12,10 +12,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
+            padding: 40px 20px;
             box-sizing: border-box;
         }
         .header-title {
@@ -40,7 +40,7 @@
             flex-wrap: wrap;
             gap: 20px;
             justify-content: center;
-            max-width: 800px;
+            max-width: 1100px; /* Diperlebar agar memuat 3 kartu per baris dengan baik */
             width: 100%;
         }
 
@@ -64,7 +64,6 @@
         .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            border-color: #3b82f6;
         }
 
         .card-icon {
@@ -89,7 +88,6 @@
 
         /* Tombol di dalam kartu */
         .card-btn {
-            background: #3b82f6;
             color: white;
             padding: 12px 0;
             border-radius: 8px;
@@ -98,12 +96,43 @@
             font-size: 14px;
             transition: background 0.2s;
         }
+        
+        /* Pewarnaan Kartu (Warna Berbeda untuk Tiap Menu) */
         .card-1 .card-btn { background: #3b82f6; }
         .card-1:hover .card-btn { background: #2563eb; }
+        .card-1:hover { border-color: #3b82f6; }
         
         .card-2 .card-btn { background: #10b981; }
         .card-2:hover .card-btn { background: #059669; }
         .card-2:hover { border-color: #10b981; }
+
+        .card-3 .card-btn { background: #8b5cf6; } /* Ungu */
+        .card-3:hover .card-btn { background: #7c3aed; }
+        .card-3:hover { border-color: #8b5cf6; }
+
+        .card-4 .card-btn { background: #f97316; } /* Oranye */
+        .card-4:hover .card-btn { background: #ea580c; }
+        .card-4:hover { border-color: #f97316; }
+
+        .card-5 .card-btn { background: #ef4444; } /* Merah */
+        .card-5:hover .card-btn { background: #dc2626; }
+        .card-5:hover { border-color: #ef4444; }
+
+        .card-6 .card-btn { background: #f59e0b; } /* Kuning/Amber */
+        .card-6:hover .card-btn { background: #d97706; }
+        .card-6:hover { border-color: #f59e0b; }
+
+        .card-7 .card-btn { background: #14b8a6; } /* Teal */
+        .card-7:hover .card-btn { background: #0d9488; }
+        .card-7:hover { border-color: #14b8a6; }
+
+        .card-8 .card-btn { background: #6366f1; } /* Indigo */
+        .card-8:hover .card-btn { background: #4f46e5; }
+        .card-8:hover { border-color: #6366f1; }
+
+        .card-9 .card-btn { background: #ec4899; } /* Pink */
+        .card-9:hover .card-btn { background: #db2777; }
+        .card-9:hover { border-color: #ec4899; }
 
     </style>
 </head>
@@ -129,6 +158,62 @@
             <div class="card-title">Tes Kecermatan<br>(Angka / Huruf Hilang)</div>
             <div class="card-desc">Latih daya ingat pendek, fokus, dan ketelitian mata Anda dalam mencari karakter yang hilang pada kolom referensi.</div>
             <div class="card-btn">Mulai Tes Kecermatan</div>
+        </a>
+
+        <!-- Pilihan 3: Aritmatika Dasar -->
+        <a href="#" class="card card-3">
+            <div class="card-icon">🔢</div>
+            <div class="card-title">Aritmatika Dasar</div>
+            <div class="card-desc">Asah kemampuan operasi hitungan, menentukan pola deret angka, serta penyelesaian soal pecahan dan desimal.</div>
+            <div class="card-btn">Mulai Aritmatika</div>
+        </a>
+
+        <!-- Pilihan 4: Perbandingan & Rasio -->
+        <a href="#" class="card card-4">
+            <div class="card-icon">⚖️</div>
+            <div class="card-title">Perbandingan & Rasio</div>
+            <div class="card-desc">Latih logika Anda dalam memecahkan soal perbandingan senilai, berbalik nilai, dan proporsi rasio matematis.</div>
+            <div class="card-btn">Mulai Perbandingan</div>
+        </a>
+
+        <!-- Pilihan 5: Jarak, Kecepatan, Waktu -->
+        <a href="#" class="card card-5">
+            <div class="card-icon">⏱️</div>
+            <div class="card-title">Jarak, Kecepatan, Waktu</div>
+            <div class="card-desc">Pahami dan kuasai rumus dasar JKW untuk menyelesaikan soal cerita pergerakan, papasan, dan susul-menyusul.</div>
+            <div class="card-btn">Mulai Latihan JKW</div>
+        </a>
+
+        <!-- Pilihan 6: Hitung Cepat -->
+        <a href="#" class="card card-6">
+            <div class="card-icon">⚡</div>
+            <div class="card-title">Hitung Cepat</div>
+            <div class="card-desc">Tingkatkan kecepatan dan ketepatan refleks Anda dalam operasi penjumlahan, pengurangan, perkalian, dan pembagian.</div>
+            <div class="card-btn">Mulai Hitung Cepat</div>
+        </a>
+
+        <!-- Pilihan 7: Geometri Dasar -->
+        <a href="#" class="card card-7">
+            <div class="card-icon">📐</div>
+            <div class="card-title">Geometri Dasar</div>
+            <div class="card-desc">Pelajari konsep dan rumus dasar menghitung luas, keliling, hingga volume untuk bangun datar dan bangun ruang.</div>
+            <div class="card-btn">Mulai Geometri</div>
+        </a>
+
+        <!-- Pilihan 8: Statistika Dasar -->
+        <a href="#" class="card card-8">
+            <div class="card-icon">📊</div>
+            <div class="card-title">Statistika Dasar</div>
+            <div class="card-desc">Kuasai pengolahan data dasar dengan menghitung nilai rata-rata (Mean), nilai tengah (Median), dan Modus.</div>
+            <div class="card-btn">Mulai Statistika</div>
+        </a>
+
+        <!-- Pilihan 9: Aljabar Sederhana -->
+        <a href="#" class="card card-9">
+            <div class="card-icon">✖️</div>
+            <div class="card-title">Aljabar Sederhana</div>
+            <div class="card-desc">Latih kemampuan memecahkan persamaan linear, pindah ruas, dan manipulasi variabel matematika dasar.</div>
+            <div class="card-btn">Mulai Aljabar</div>
         </a>
     </div>
 
