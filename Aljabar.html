@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master TIU - Aljabar & SPLDV (Trik Cepat)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background-color: #fff1f2; 
+            background-image: radial-gradient(#fecdd3 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #ffe4e6; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #f43f5e; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #e11d48; }
+
+        .cat-card { transition: all 0.25s ease; border: 2px solid #ffe4e6; }
+        .cat-card:hover { transform: translateY(-4px); border-color: #e11d48; box-shadow: 0 12px 20px -8px rgba(225, 29, 72, 0.3); }
+        .cat-card.selected { border-color: #be123c; background-color: #fff1f2; box-shadow: 0 0 0 2px #be123c; }
+
+        .opt-btn { transition: all 0.2s ease; border: 2px solid #ffe4e6; }
+        .opt-btn:hover:not(:disabled) { border-color: #fb7185; background-color: #fff1f2; transform: scale(1.01); }
+        .opt-btn.selected { background-color: #be123c; color: white; border-color: #9f1239; transform: scale(1.01); }
+        .opt-btn.selected .opt-letter { background-color: white; color: #be123c; border-color: white; }
+
+        .header-bg { 
+            background: linear-gradient(135deg, #4c0519 0%, #9f1239 100%); 
+            border-bottom: 5px solid #fb7185;
+        }
+        
+        .timer-pulse { animation: pulseRed 1s infinite; }
+        @keyframes pulseRed { 0%, 100% { color: #f43f5e; } 50% { color: #fca5a5; } }
+        
+        .math-eq { font-family: 'Times New Roman', Times, serif; font-style: italic; font-size: 1.15em; font-weight: bold; color: #9f1239; background: #ffe4e6; padding: 2px 8px; border-radius: 6px;}
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex justify-center items-center py-8 px-4 sm:px-6">
+
+    <div class="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden relative border border-slate-100">
+        
+        <!-- HEADER -->
+        <div class="header-bg text-white p-6 sm:p-8 text-center relative">
+            <h1 class="text-2xl sm:text-3xl font-black tracking-tight flex items-center justify-center gap-3">
+                <svg class="w-8 h-8 text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                Master Aljabar & Trik Cepat
+            </h1>
+            <p class="text-rose-200 mt-2 text-sm sm:text-base font-medium">Tryout Pembahasan Lengkap: Konsep Dasar vs Trik Bimbel</p>
+        </div>
+
+        <!-- 1. HOME SCREEN -->
+        <div id="home-screen" class="p-6 sm:p-10 fade-in">
+            <!-- Waktu -->
+            <div class="mb-8 bg-rose-50/50 p-6 rounded-2xl border border-rose-100">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <span class="bg-rose-200 text-rose-800 px-3 py-1 rounded-lg text-sm">1</span> Target Waktu
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <label class="cursor-pointer relative">
+                        <input type="radio" name="timer" value="60" class="peer sr-only" checked>
+                        <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-rose-600 peer-checked:bg-rose-50 text-center h-full transition bg-white">
+                            <span class="block text-lg font-bold text-slate-700 peer-checked:text-rose-700">60 Detik</span>
+                            <span class="inline-block mt-1 text-xs font-bold bg-amber-100 text-amber-700 px-2 py-1 rounded-md">Standar Cepat</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer relative">
+                        <input type="radio" name="timer" value="120" class="peer sr-only">
+                        <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-rose-600 peer-checked:bg-rose-50 text-center h-full transition bg-white">
+                            <span class="block text-lg font-bold text-slate-700 peer-checked:text-rose-700">120 Detik</span>
+                            <span class="inline-block mt-1 text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">Latihan Normal</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer relative">
+                        <input type="radio" name="timer" value="0" class="peer sr-only">
+                        <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-rose-600 peer-checked:bg-rose-50 text-center h-full transition bg-white">
+                            <span class="block text-lg font-bold text-slate-700 peer-checked:text-rose-700">Tanpa Waktu</span>
+                            <span class="inline-block mt-1 text-xs font-bold text-white bg-rose-500 px-2 py-1 rounded-md">Pemahaman</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Kategori -->
+            <div class="mb-8">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <span class="bg-rose-200 text-rose-800 px-3 py-1 rounded-lg text-sm">2</span> Pilih Jenis Materi
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="category-grid">
+                    <!-- Digenerate oleh JS -->
+                </div>
+            </div>
+
+            <button onclick="startQuiz()" id="start-btn" class="w-full bg-slate-200 text-slate-400 font-black py-5 rounded-2xl transition text-lg cursor-not-allowed uppercase tracking-widest" disabled>
+                Pilih Kategori Dulu
+            </button>
+        </div>
+
+        <!-- 2. QUIZ SCREEN -->
+        <div id="quiz-screen" class="p-6 sm:p-10 hidden flex-col min-h-[500px]">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-2 border-slate-100 pb-4 mb-6 gap-4">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <span id="question-counter" class="bg-rose-900 text-white text-xs font-black px-3 py-1.5 rounded-lg tracking-widest">SOAL 1/10</span>
+                        <span id="difficulty-badge" class="text-xs font-bold px-3 py-1.5 rounded-lg border uppercase tracking-wider">MUDAH</span>
+                    </div>
+                    <p id="quiz-category-title" class="text-sm text-slate-500 mt-2 font-bold">Kategori: -</p>
+                </div>
+                
+                <div id="timer-box-container">
+                    <div id="timer-box" class="flex items-center gap-2 bg-slate-50 text-slate-700 border-2 border-slate-200 px-4 py-2 rounded-xl font-bold transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <span id="timer-display" class="text-xl tabular-nums tracking-wider">01:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6 flex-grow flex flex-col">
+                <div class="bg-white p-6 sm:p-8 rounded-2xl border-2 border-rose-100 shadow-sm mb-6 text-slate-800 text-[1.1rem] leading-relaxed font-medium" id="question-text">
+                    <!-- Teks Soal -->
+                </div>
+                
+                <div id="options-container" class="space-y-3 mt-auto">
+                    <!-- Tombol ABCDE -->
+                </div>
+            </div>
+
+            <button id="next-btn" onclick="submitAnswer()" class="w-full bg-slate-200 text-slate-400 font-extrabold py-5 rounded-2xl cursor-not-allowed transition text-lg tracking-widest uppercase" disabled>
+                PILIH JAWABAN
+            </button>
+        </div>
+
+        <!-- 3. RESULT SCREEN -->
+        <div id="result-screen" class="p-6 sm:p-10 hidden bg-rose-50/40">
+            <div class="text-center mb-10 bg-rose-900 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmYiLz48L3N2Zz4=')]"></div>
+                <h2 class="text-lg font-bold text-rose-300 mb-1 uppercase tracking-widest relative z-10">Skor Kamu</h2>
+                <div class="text-7xl font-black text-white my-3 tracking-tighter relative z-10" id="final-score">0</div>
+                <div class="inline-block mt-3 bg-black/30 text-white px-5 py-2 rounded-xl font-bold backdrop-blur-sm relative z-10">
+                    <span id="res-benar" class="text-emerald-400">0 Benar</span> &nbsp;|&nbsp; <span id="res-salah" class="text-amber-400">0 Salah</span>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="font-extrabold text-xl mb-6 text-slate-800 flex items-center gap-2 border-b-2 border-rose-200 pb-3">
+                    <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    Evaluasi: Cara Biasa vs Cara Cepat
+                </h3>
+                <div id="review-container" class="space-y-6">
+                    <!-- Review per soal -->
+                </div>
+            </div>
+
+            <button onclick="resetApp()" class="w-full bg-rose-800 hover:bg-rose-900 text-white font-extrabold py-5 rounded-2xl transition text-lg mt-4 shadow-xl uppercase tracking-widest">
+                KEMBALI KE MENU
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const categories = [
+            { id: 1, title: "Persamaan Linear 1 Variabel (SPLSV)", desc: "Menyelesaikan nilai x pada persamaan linear tunggal.", icon: "✖️", subs: [1, 2] },
+            { id: 2, title: "Persamaan Linear 2 Variabel (SPLDV)", desc: "Metode Eliminasi & Substitusi mencari nilai x dan y.", icon: "🔣", subs: [3, 4] },
+            { id: 3, title: "Soal Cerita Aljabar", desc: "Beragam studi kasus (Umur, Beli Barang, Hotel, Kurir, dll).", icon: "📚", subs: [5, 6, 7, 8] },
+            { id: 4, title: "CAMPURAN (Tryout Aljabar)", desc: "10 Soal acak kombinasi dari semua materi aljabar di atas.", icon: "🔥", isSpecial: true, subs: [1,2,3,4,5,6,7,8] }
+        ];
+
+        let selectedCategoryId = null, selectedCategoryObj = null, timePerQuestion = 60, questions = [], currentIndex = 0, score = 0, userAnswers = [], timerInterval, timeRemaining = 0, currentSelectedOption = null;
+        const totalQuestions = 10;
+
+        // Utilities
+        const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+        const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+        const names = ["Andi", "Budi", "Citra", "Deni", "Eka", "Fajar", "Gita", "Hana", "Iwan", "Jojo", "Reza", "Sari"];
+        
+        const formatTerm = (coef, isFirst) => {
+            if(coef === 0) return "";
+            let sign = coef < 0 ? "-" : "+";
+            let absCoef = Math.abs(coef);
+            if(isFirst) return coef < 0 ? `- ${absCoef}` : `${absCoef}`;
+            return `${sign} ${absCoef}`;
+        };
+        const formatXTerm = (coef, isFirst) => {
+            if(coef === 0) return "";
+            let sign = coef < 0 ? "-" : "+";
+            let absCoef = Math.abs(coef) === 1 ? "" : Math.abs(coef);
+            if(isFirst) return coef < 0 ? `- ${absCoef}x` : `${absCoef}x`;
+            return `${sign} ${absCoef}x`;
+        };
+
+        const genOptions = (correct, distractors, unit = "") => {
+            let ops = new Set();
+            let cStr = (typeof correct === 'number' && correct % 1 !== 0) ? correct.toFixed(1) : correct.toString();
+            ops.add(cStr);
+            for(let d of distractors) {
+                let dStr = (typeof d === 'number' && d % 1 !== 0) ? d.toFixed(1) : d.toString();
+                if(ops.size < 5 && dStr !== cStr) ops.add(dStr);
+            }
+            let isNum = !isNaN(parseFloat(correct)), modifier = 1;
+            while(ops.size < 5) {
+                let fallback = isNum ? parseFloat(correct) + modifier : correct + "x";
+                let fStr = typeof fallback === 'number' && fallback % 1 !== 0 ? fallback.toFixed(1) : fallback.toString();
+                if(!ops.has(fStr)) ops.add(fStr);
+                modifier = modifier > 0 ? -modifier : (-modifier) + 1;
+            }
+            return Array.from(ops).map(x => ({ text: x + (unit ? ` ${unit}` : ''), isCorrect: x === cStr })).sort(() => Math.random() - 0.5); 
+        };
+
+        // KONTEKS CERITA DINAMIS
+        const ageRelations = [{tua: "Ayah", muda: "Budi"}, {tua: "Ibu", muda: "Sinta"}, {tua: "Paman", muda: "Deni"}, {tua: "Kakek", muda: "Cucunya"}, {tua: "Tante", muda: "Gita"}];
+        const shopItems = [
+            {i1: "kemeja", i2: "celana", mult1: 20000, mult2: 30000},
+            {i1: "kopi susu", i2: "roti bakar", mult1: 5000, mult2: 4000},
+            {i1: "tiket dewasa", i2: "tiket anak", mult1: 15000, mult2: 10000}
+        ];
+        const splTotalCases = [
+            {o1: "sepeda motor", o2: "mobil", p1: "roda 2", p2: "roda 4", unit: "roda", ent: "kendaraan", ask: "pendapatan parkir", c1: 2000, c2: 5000},
+            {o1: "ayam", o2: "kambing", p1: "kaki 2", p2: "kaki 4", unit: "kaki", ent: "hewan ternak", ask: "total harga jual hewan", c1: 50000, c2: 1500000},
+            {o1: "kamar standar", o2: "kamar VIP", p1: "kapasitas 2 orang", p2: "kapasitas 4 orang", unit: "orang", ent: "kamar terisi", ask: "pendapatan sewa hotel", c1: 250000, c2: 550000}
+        ];
+        const splScoreCases = [
+            {act: "BENAR", fail: "SALAH", pB: 4, pS: -1, unit: "soal", ctx: "Ujian SKD CPNS", askSucc: true},
+            {act: "SUKSES", fail: "RUSAK", pB: 5000, pS: -2000, unit: "paket", ctx: "Sistem Kurir Ekspedisi", askSucc: false}
+        ];
+
+        // LOGIC 8 VARIASI DENGAN PENJELASAN GANDA (BIASA VS CEPAT)
+        function createQuestion(subType) {
+            let q = { category: subType };
+            
+            switch(subType) {
+                case 1: { // SPLSV Dasar
+                    q.difficulty = 'Mudah';
+                    let x = randInt(-8, 10); if(x === 0) x = 3;
+                    let a = randInt(2, 6), c = randInt(-3, 5); if(a === c) c = a - 2;
+                    let b = randInt(-15, 15), d = a*x + b - c*x;
+                    
+                    let leftStr = `${formatXTerm(a, true)} ${formatTerm(b, false)}`;
+                    let rightStr = c === 0 ? `${d}` : `${formatXTerm(c, true)} ${formatTerm(d, false)}`;
+
+                    q.text = `Tentukan penyelesaian nilai <span class="math-eq">x</span> dari persamaan berikut:<br><br><div class="text-center text-xl"><span class="math-eq">${leftStr} = ${rightStr}</span></div>`;
+                    q.options = genOptions(x, [-x, (d+b)/(a-c), x+1, x-2]);
+                    q.explanation = `
+                        <div class="mb-4">
+                            <div class="font-bold text-sky-800 bg-sky-100 p-2 rounded-t-lg border-l-4 border-sky-600">📘 CARA BIASA (Konsep Dasar)</div>
+                            <div class="p-3 bg-sky-50 rounded-b-lg text-sm border border-sky-100">
+                                Gini konsepnya: kumpulkan yang ada 'x'-nya di sebelah kiri, dan angka biasa di sebelah kanan.<br>
+                                1. ${leftStr} = ${rightStr}<br>
+                                2. Pindahkan: ${formatXTerm(a, true)} ${formatXTerm(-c, false)} = ${d} ${formatTerm(-b, false)}<br>
+                                3. Hitung: ${a-c}x = ${d-b}<br>
+                                4. Nilai x = ${(d-b)} / ${a-c} = <b>${x}</b>.
+                            </div>
+                        </div>
+                        <div>
+                            <div class="font-bold text-rose-800 bg-rose-100 p-2 rounded-t-lg border-l-4 border-rose-600">🚀 CARA CEPAT (Hitung di Kepala)</div>
+                            <div class="p-3 bg-rose-50 rounded-b-lg text-sm border border-rose-100">
+                                <b>Triknya:</b> Langsung selisihkan saja!<br>
+                                1. Selisih Angka (Kanan kurang Kiri) = ${d} - (${b}) = ${d-b}.<br>
+                                2. Selisih Huruf (Kiri kurang Kanan) = ${a}x - (${c}x) = ${a-c}x.<br>
+                                3. Langsung bagi: ${d-b} / ${a-c} = <b>${x}</b>. Beres!
+                            </div>
+                        </div>
+                    `;
+                    break;
+                }
+                case 2: { // SPLSV Kurung
+                    q.difficulty = 'Sedang';
+                    let x = randInt(2, 8), a = randInt(2, 4), b = randInt(-5, 5), c = randInt(1, 5); if(a === c) c = a + 1;
+                    let d = a*(x + b) - c*x;
+                    let leftStr = `${a}(x ${formatTerm(b, false)})`, rightStr = `${formatXTerm(c, true)} ${formatTerm(d, false)}`;
+                    let ans = 2*x + 1;
+
+                    q.text = `Diketahui persamaan: <span class="math-eq">${leftStr} = ${rightStr}</span>.<br>Berapakah nilai dari <span class="math-eq">2x + 1</span> ?`;
+                    q.options = genOptions(ans, [x, 2*(-x)+1, ans+2]);
+                    q.explanation = `
+                        <div class="mb-4">
+                            <div class="font-bold text-sky-800 bg-sky-100 p-2 rounded-t-lg border-l-4 border-sky-600">📘 CARA BIASA (Distributif)</div>
+                            <div class="p-3 bg-sky-50 rounded-b-lg text-sm border border-sky-100">
+                                1. Buka kurungnya (kali masuk): ${a}x ${formatTerm(a*b, false)} = ${rightStr}<br>
+                                2. Kumpulkan x di kiri: ${a-c}x = ${d - (a*b)}<br>
+                                3. Dapat nilai x = ${x}.<br>
+                                4. Ingat, yang ditanya 2x + 1. Masukkan nilai x: 2(${x}) + 1 = <b>${ans}</b>.
+                            </div>
+                        </div>
+                        <div>
+                            <div class="font-bold text-rose-800 bg-rose-100 p-2 rounded-t-lg border-l-4 border-rose-600">⚠️ AWAS JEBAKAN</div>
+                            <div class="p-3 bg-rose-50 rounded-b-lg text-sm border border-rose-100 text-rose-800">
+                                Banyak peserta berhenti saat sudah dapat <b>x = ${x}</b> lalu langsung memilih jawaban itu. Padahal soal meminta nilai <b>2x + 1</b>. Selalu baca ulang kalimat terakhir soal!
+                            </div>
+                        </div>
+                    `;
+                    break;
+                }
+                case 3: { // SPLDV Tipe 1 (Ditanya x+y)
+                    q.difficulty = 'Sedang';
+                    let x = randInt(1, 6), y = randInt(1, 6), a = randInt(2, 4), b = randInt(1, 3), c = randInt(1, 3), d = randInt(-3, -1); 
+                    let eq1 = a*x + b*y, eq2 = c*x + d*y, ans = x + y;
+
+                    q.text = `Diketahui <span class="math-eq">x</span> dan <span class="math-eq">y</span> adalah penyelesaian dari sistem persamaan:<br><br><div class="text-center my-2"><span class="math-eq">${a}x + ${b}y = ${eq1}</span><br><span class="math-eq">${c}x ${d}y = ${eq2}</span></div><br>Nilai dari <span class="math-eq">x + y</span> adalah ...`;
+                    q.options = genOptions(ans, [x, y, x-y, ans+2]);
+                    q.explanation = `
+                        <div class="mb-4">
+                            <div class="font-bold text-sky-800 bg-sky-100 p-2 rounded-t-lg border-l-4 border-sky-600">📘 CARA BIASA (Eliminasi Manual)</div>
+                            <div class="p-3 bg-sky-50 rounded-b-lg text-sm border border-sky-100">
+                                Samakan salah satu koefisien (misal x).<br>
+                                [1] ${a}x + ${b}y = ${eq1} (Kali ${c}) ➡ ${a*c}x + ${b*c}y = ${eq1*c}<br>
+                                [2] ${c}x ${d}y = ${eq2} (Kali ${a}) ➡ ${a*c}x ${a*d}y = ${eq2*a}<br>
+                                ----------------------------- dikurangkan<br>
+                                Didapatkan y = ${y}. Masukkan y ke persamaan 1, didapat x = ${x}.<br>
+                                Hasil x + y = ${x} + ${y} = <b>${ans}</b>.
+                            </div>
+                        </div>
+                        <div>
+                            <div class="font-bold text-rose-800 bg-rose-100 p-2 rounded-t-lg border-l-4 border-rose-600">🚀 CARA CEPAT (Substitusi Ekspres)</div>
+                            <div class="p-3 bg-rose-50 rounded-b-lg text-sm border border-rose-100">
+                                Kalau persamaannya ada yang negatif seperti ${c}x ${d}y = ${eq2}, langsung jadikan ${c}x = ${eq2} + ${Math.abs(d)}y. Lalu substitusikan ke persamaan atasnya untuk menghindari perkalian silang yang besar. Jauh lebih hemat waktu corat-coret!
+                            </div>
+                        </div>
+                    `;
+                    break;
+                }
+                case 4: { // SPLDV Tipe 2
+                    q.difficulty = 'HOTS 🔥';
+                    let x = randInt(2, 5), y = randInt(1, 4), a = 3, b = 2, c1 = a*x + b*y, c2 = x - y; 
+                    let askA = randInt(2,4), askB = randInt(3,5), ans = askA*x + askB*y;
+
+                    q.text = `Jika <span class="math-eq">x</span> dan <span class="math-eq">y</span> memenuhi sistem persamaan: <span class="math-eq">${a}x + ${b}y = ${c1}</span> dan <span class="math-eq">x - y = ${c2}</span>.<br>Maka nilai dari <span class="math-eq">${askA}x + ${askB}y</span> adalah ...`;
+                    q.options = genOptions(ans, [x+y, ans-askA, ans+askB]);
+                    q.explanation = `
+                        <div class="mb-4">
+                            <div class="font-bold text-sky-800 bg-sky-100 p-2 rounded-t-lg border-l-4 border-sky-600">📘 CARA BIASA (Substitusi Penuh)</div>
+                            <div class="p-3 bg-sky-50 rounded-b-lg text-sm border border-sky-100">
+                                1. Ubah persamaan kedua: x - y = ${c2} ➡ x = y ${c2 < 0 ? '- '+Math.abs(c2) : '+ '+c2}.<br>
+                                2. Masukkan ke persamaan pertama: ${a}(y ${c2 < 0 ? '- '+Math.abs(c2) : '+ '+c2}) + ${b}y = ${c1}.<br>
+                                3. Hitung: ${a}y ${c2 < 0 ? '- '+(a*Math.abs(c2)) : '+ '+(a*c2)} + ${b}y = ${c1}. Ketemu <b>y = ${y}</b>.<br>
+                                4. Kembalikan ke x = y ${c2 < 0 ? '- '+Math.abs(c2) : '+ '+c2}. Ketemu <b>x = ${x}</b>.<br>
+                                5. Hitung pertanyaan: ${askA}(${x}) + ${askB}(${y}) = <b>${ans}</b>.
+                            </div>
+                        </div>
+                    `;
+                    break;
+                }
+                case 5: { // Cerita: Umur 
+                    q.difficulty = 'HOTS 🔥';
+                    let rel = rand(ageRelations);
+                    let set = rand([{A:10,Y:40,t:5,m:7,k:4}, {A:12,Y:36,t:6,m:5,k:3}, {A:14,Y:42,t:7,m:5,k:3}]);
+                    let askTua = Math.random() > 0.5;
+                    let ans = askTua ? set.Y : set.A, targetName = askTua ? rel.tua : rel.muda;
+
+                    q.text = `Saat ini umur ${rel.tua} adalah ${set.k} kali umur ${rel.muda}. Diketahui bahwa ${set.t} tahun yang lalu, umur ${rel.tua} adalah ${set.m} kali umur ${rel.muda}. Berapakah umur <b>${targetName}</b> saat ini?`;
+                    q.options = genOptions(ans, [askTua ? set.A : set.Y, set.Y-set.A, ans-set.t, ans+set.t], "tahun");
+                    q.explanation = `
+                        <div class="mb-4">
+                            <div class="font-bold text-sky-800 bg-sky-100 p-2 rounded-t-lg border-l-4 border-sky-600">📘 CARA BIASA (Aljabar Linear)</div>
+                            <div class="p-3 bg-sky-50 rounded-b-lg text-sm border border-sky-100">
+                                Misal umur ${rel.muda} = x, ${rel.tua} = y.<br>
+                                Pers. 1 (Sekarang): y = ${set.k}x<br>
+                                Pers. 2 (${set.t} thn lalu): y - ${set.t} = ${set.m}(x - ${set.t})<br>
+                                Substitusi pers 1 ke 2: ${set.k}x - ${set.t} = ${set.m}x - ${set.m * set.t}. 
+                                Didapat x (${rel.muda}) = ${set.A} tahun dan y (${rel.tua}) = ${set.Y} tahun.
+                            </div>
+                        </div>
+                        <div>
+                            <div class="font-bold text-rose-800 bg-rose-100 p-2 rounded-t-lg border-l-4 border-rose-600">🚀 CARA CEPAT (Rumus Kilat Bimbel)</div>
+                            <div class="p-3 bg-rose-50 rounded-b-lg text-sm border border-rose-100">
+                                <b>Hafalkan Pola Ini (Cari Umur Yang Muda Dulu):</b><br>
+                                Umur Muda = (Waktu Lalu × (Perbandingan Lama - 1)) / (Perbandingan Lama - Perbandingan Sekarang)<br>
+                                Umur Muda = (${set.t} × (${set.m} - 1)) / (${set.m} - ${set.k}) = (${set.t} × ${set.m-1}) / ${set.m-set.k} = <b>${set.A} tahun.</b><br>
+                                Umur Tua tinggal dikalikan kondisi sekarang (x${set.k}) = ${set.A} × ${set.k} = ${set.Y} tahun.<br>
+                                Karena yang ditanya umur ${targetName}, jawabannya <b>${ans} tahun</b>.
+                            </div>
+                        </div>
+                    `;
+                    break;
+                }
+                case 6: { // Cerita: Belanja
+                    q.difficulty = 'Sedang';
+                    let it = rand(shopItems), P1 = randInt(2, 4) * it.mult1, P2 = randInt(1, 3) * it.mult2;
+                    let n1 = randInt(2,3), m1 = randInt(2,4), T1 = n1*P1 + m1*P2;
+                    let n2 = randInt(4,5), m2 = randInt(1,3), T2 = n2*P1 + m2*P2;
+                    let askN = randInt(1,2), askM = randInt(2,3), ans = askN*P1 + askM*P2;
+
+                    q.text = `${rand(names)} membeli ${n1} ${it.i1} dan ${m1} ${it.i2} dengan membayar Rp${T1.toLocaleString('id-ID')}. Di tempat yang sama, ${rand(names)} membeli ${n2} ${it.i1} dan ${m2} ${it.i2} seharga Rp${T2.toLocaleString('id-ID')}. Jika kamu ingin membeli ${askN} ${it.i1} dan ${askM} ${it.i2}, berapakah uang yang harus disiapkan?`;
+                    q.options = genOptions(ans, [P1+P2, ans+it.mult1, ans-it.mult2]).map(o => ({...o, text: `Rp${parseInt(o.text).toLocaleString('id-ID')}`}));
+                    q.explanation = `
+                        <div class="mb-4">
+                            <div class="font-bold text-sky-800 bg-sky-100 p-2 rounded-t-lg border-l-4 border-sky-600">📘 CARA BIASA (SPLDV Biasa)</div>
+                            <div class="p-3 bg-sky-50 rounded-b-lg text-sm border border-sky-100">
+                                Gunakan eliminasi untuk mencari harga masing-masing.<br>
+                                Harga 1 ${it.i1} = Rp${P1.toLocaleString('id-ID')}<br>
+                                Harga 1 ${it.i2} = Rp${P2.toLocaleString('id-ID')}<br>
+                                Maka harga untuk ${askN} ${it.i1} + ${askM} ${it.i2} = ${askN}(${P1}) + ${askM}(${P2}) = <b>Rp${ans.toLocaleString('id-ID')}</b>.
+                            </div>
+                        </div>
+                    `;
+                    break;
+                }
+                case 7: { // Cerita: Parkiran / Hewan / Hotel
+                    q.difficulty = 'Sedang';
+                    let ctx = rand(splTotalCases), x = randInt(15, 35), y = randInt(10, 25); 
+                    let totalEnt = x + y, totalParts = (x * 2) + (y * 4), ans = (x * ctx.c1) + (y * ctx.c2);
+
+                    q.text = `Terdapat ${totalEnt} ${ctx.ent} yang terdiri dari ${ctx.o1} (${ctx.p1}) dan ${ctx.o2} (${ctx.p2}). Jika dihitung secara keseluruhan, jumlah ${ctx.unit} yang ada adalah sebanyak ${totalParts}. Diketahui tarif/harga untuk ${ctx.o1} adalah Rp${ctx.c1.toLocaleString('id-ID')} dan ${ctx.o2} adalah Rp${ctx.c2.toLocaleString('id-ID')}. Berapakah ${ctx.ask} dari kondisi tersebut?`;
+                    q.options = genOptions(ans, [(x*ctx.c2)+(y*ctx.c1), ans+(ctx.c1*2), ans-(ctx.c2)]).map(o => ({...o, text: `Rp${parseInt(o.text).toLocaleString('id-ID')}`}));
+                    q.explanation = `
+                        <div class="mb-4">
+                            <div class="font-bold text-sky-800 bg-sky-100 p-2 rounded-t-lg border-l-4 border-sky-600">📘 CARA BIASA (Aljabar SPLDV)</div>
+                            <div class="p-3 bg-sky-50 rounded-b-lg text-sm border border-sky-100">
+                                Misal ${ctx.o1} = x, ${ctx.o2} = y.<br>
+                                1) x + y = ${totalEnt}<br>
+                                2) 2x + 4y = ${totalParts}<br>
+                                Eliminasi didapat: ${ctx.o1}(x) = ${x}, dan ${ctx.o2}(y) = ${y}.<br>
+                                Total = (${x} × ${ctx.c1}) + (${y} × ${ctx.c2}) = <b>Rp${ans.toLocaleString('id-ID')}</b>.
+                            </div>
+                        </div>
+                        <div>
+                            <div class="font-bold text-rose-800 bg-rose-100 p-2 rounded-t-lg border-l-4 border-rose-600">🚀 CARA CEPAT (Anggap Semua Kecil)</div>
+                            <div class="p-3 bg-rose-50 rounded-b-lg text-sm border border-rose-100">
+                                1. Anggap semua adalah ${ctx.o1} (yang bernilai 2). Maka seharusnya jumlah ${ctx.unit} = ${totalEnt} × 2 = <b>${totalEnt*2}</b>.<br>
+                                2. Kenyataannya di soal ada <b>${totalParts}</b> ${ctx.unit}. Berarti ada sisa = ${totalParts} - ${totalEnt*2} = <b>${totalParts - (totalEnt*2)}</b>.<br>
+                                3. Sisa ${ctx.unit} ini pasti miliknya ${ctx.o2} (karena dia kelebihan 2 ${ctx.unit} dibanding ${ctx.o1}).<br>
+                                4. Jumlah ${ctx.o2} = ${totalParts - (totalEnt*2)} / 2 = <b>${y} buah</b>. (Maka ${ctx.o1} otomatis = ${totalEnt} - ${y} = ${x}). Tinggal kalikan dengan harganya! Cepat kan?
+                            </div>
+                        </div>
+                    `;
+                    break;
+                }
+                case 8: { // Cerita: Skor Ujian (HOTS)
+                    q.difficulty = 'HOTS 🔥';
+                    let ctx = rand(splScoreCases), totalAct = rand([30, 40, 50]), succ = randInt(20, Math.floor(totalAct*0.8)), fail = randInt(3, totalAct - succ); 
+                    let terjawab = succ + fail, totalSkor = (succ * ctx.pB) + (fail * ctx.pS), ans = ctx.askSucc ? succ : fail;
+
+                    q.text = `Dalam suatu ${ctx.ctx}, ditetapkan aturan: Jika ${ctx.act} mendapat poin ${ctx.pB}, jika ${ctx.fail} mendapat poin ${ctx.pS}, dan sisanya jika dibiarkan kosong poinnya 0.<br>Dari total ${totalAct} ${ctx.unit}, seorang peserta mengerjakan sebanyak ${terjawab} ${ctx.unit} dan memperoleh skor akhir ${totalSkor}.<br>Berapa banyak ${ctx.unit} yang bersatus <b>${ctx.askSucc ? ctx.act : ctx.fail}</b>?`;
+                    q.options = genOptions(ans, [terjawab, Math.floor((totalSkor+terjawab)/(ctx.pB+1)), ans-2, ans+3], ctx.unit);
+                    q.explanation = `
+                        <div class="mb-4">
+                            <div class="font-bold text-sky-800 bg-sky-100 p-2 rounded-t-lg border-l-4 border-sky-600">📘 CARA BIASA (Substitusi Aljabar)</div>
+                            <div class="p-3 bg-sky-50 rounded-b-lg text-sm border border-sky-100">
+                                Misal B = Sukses, S = Gagal.<br>
+                                1) B + S = ${terjawab} ➡ S = ${terjawab} - B<br>
+                                2) ${ctx.pB}B ${ctx.pS < 0 ? '-' : '+'} ${Math.abs(ctx.pS)}S = ${totalSkor}<br>
+                                Substitusikan S, akan didapatkan hasil B = ${succ} dan S = ${fail}.
+                            </div>
+                        </div>
+                        <div>
+                            <div class="font-bold text-rose-800 bg-rose-100 p-2 rounded-t-lg border-l-4 border-rose-600">🚀 CARA CEPAT (Anggap Sukses Semua)</div>
+                            <div class="p-3 bg-rose-50 rounded-b-lg text-sm border border-rose-100">
+                                1. Anggap aja dia <b>SUKSES SEMUA</b>. Skor yang harusnya didapat = ${terjawab} soal × ${ctx.pB} poin = <b>${terjawab*ctx.pB}</b>.<br>
+                                2. Nyatanya skornya cuma <b>${totalSkor}</b>. Berarti dia rugi = ${terjawab*ctx.pB} - ${totalSkor} = <b>${(terjawab*ctx.pB)-totalSkor} poin</b>.<br>
+                                3. Ingat! Sekali berbuat salah, dia bukan cuma nggak dapat ${ctx.pB} poin, tapi ditambah hukuman ${ctx.pS} poin. Total kerugian 1 kesalahan = ${ctx.pB} + ${Math.abs(ctx.pS)} = <b>${ctx.pB + Math.abs(ctx.pS)} poin</b>.<br>
+                                4. Banyak yang GAGAL = Total Rugi / Rugi per Kesalahan = ${(terjawab*ctx.pB)-totalSkor} / ${ctx.pB + Math.abs(ctx.pS)} = <b>${fail} ${ctx.unit}</b>. (Suksesnya berarti ${terjawab} - ${fail} = ${succ}). Gampang banget kan!
+                            </div>
+                        </div>
+                    `;
+                    break;
+                }
+            }
+            return q;
+        }
+
+        function initApp() {
+            const grid = document.getElementById('category-grid');
+            categories.forEach(c => {
+                const card = document.createElement('div');
+                let styleClass = c.isSpecial ? 'bg-rose-50 border-rose-200 sm:col-span-2' : 'bg-white';
+                
+                card.className = `cat-card cursor-pointer rounded-2xl p-5 relative ${styleClass}`;
+                card.onclick = () => selectCategory(c, card);
+                
+                card.innerHTML = `
+                    <div class="flex flex-col h-full items-center text-center">
+                        <div class="text-4xl mb-3 drop-shadow-sm">${c.icon}</div>
+                        <h3 class="font-extrabold text-slate-800 ${c.isSpecial ? 'text-rose-800' : ''}">${c.title}</h3>
+                        <p class="text-[13px] text-slate-500 mt-2 font-bold leading-relaxed">${c.desc}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function selectCategory(catObj, cardElem) {
+            document.querySelectorAll('.cat-card').forEach(el => el.classList.remove('selected'));
+            cardElem.classList.add('selected');
+            selectedCategoryId = catObj.id;
+            selectedCategoryObj = catObj;
+
+            const btn = document.getElementById('start-btn');
+            btn.disabled = false;
+            btn.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+            btn.classList.add('bg-rose-700', 'hover:bg-rose-800', 'text-white', 'shadow-xl');
+            btn.innerText = "MULAI LATIHAN SEKARANG";
+        }
+
+        function startQuiz() {
+            timePerQuestion = parseInt(document.querySelector('input[name="timer"]:checked').value);
+            questions = [];
+            for(let i=0; i<totalQuestions; i++) questions.push(createQuestion(rand(selectedCategoryObj.subs)));
+            currentIndex = 0; score = 0; userAnswers = [];
+
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('quiz-screen').classList.add('fade-in');
+            document.getElementById('quiz-category-title').innerText = `Kategori: ${selectedCategoryObj.title}`;
+
+            renderQuestion();
+        }
+
+        function getDiffStyle(diff) {
+            if(diff === 'Mudah') return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+            if(diff === 'Sedang') return 'bg-amber-100 text-amber-800 border-amber-200';
+            return 'bg-rose-100 text-rose-800 border-rose-200'; 
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            document.getElementById('question-counter').innerText = `SOAL ${currentIndex + 1}/${totalQuestions}`;
+            
+            const badge = document.getElementById('difficulty-badge');
+            badge.className = `text-[11px] font-extrabold px-3 py-1.5 rounded-lg border ${getDiffStyle(q.difficulty)} uppercase tracking-wider`;
+            badge.innerText = q.difficulty;
+
+            document.getElementById('question-text').innerHTML = q.text;
+            
+            const optCont = document.getElementById('options-container');
+            optCont.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                const letter = String.fromCharCode(65 + idx);
+                btn.className = 'opt-btn w-full text-left p-4 sm:p-5 rounded-2xl font-bold text-slate-700 flex items-center gap-4 bg-white shadow-sm';
+                btn.innerHTML = `<span class="opt-letter w-9 h-9 rounded-xl bg-rose-100 flex items-center justify-center font-black text-rose-700 text-sm border border-rose-200">${letter}</span> <span class="flex-1 text-[1.1rem]">${opt.text}</span>`;
+                btn.onclick = () => selectOption(btn, opt);
+                optCont.appendChild(btn);
+            });
+
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = true;
+            nextBtn.className = 'w-full bg-slate-200 text-slate-400 font-extrabold py-5 rounded-2xl cursor-not-allowed transition text-lg tracking-widest uppercase';
+            nextBtn.innerText = 'PILIH JAWABAN';
+
+            currentSelectedOption = null;
+            startTimer();
+        }
+
+        function selectOption(btnElement, optionData) {
+            document.querySelectorAll('.opt-btn').forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+            currentSelectedOption = optionData;
+
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = false;
+            nextBtn.className = 'w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-5 rounded-2xl shadow-lg transition transform active:scale-[0.99] text-lg uppercase tracking-widest';
+            nextBtn.innerText = currentIndex === totalQuestions - 1 ? 'SELESAI & LIHAT SKOR' : 'KUNCI JAWABAN & LANJUT';
+        }
+
+        function startTimer() {
+            if(timerInterval) clearInterval(timerInterval);
+            const tContainer = document.getElementById('timer-box-container');
+            if (timePerQuestion === 0) { tContainer.classList.add('hidden'); return; }
+            
+            tContainer.classList.remove('hidden');
+            timeRemaining = timePerQuestion;
+            updateTimerUI();
+
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerUI();
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    handleNext(true); 
+                }
+            }, 1000);
+        }
+
+        function updateTimerUI() {
+            const m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
+            const s = (timeRemaining % 60).toString().padStart(2, '0');
+            const box = document.getElementById('timer-box');
+            const disp = document.getElementById('timer-display');
+            
+            disp.innerText = `${m}:${s}`;
+            
+            if(timeRemaining <= 10) {
+                disp.classList.add('timer-pulse');
+                box.classList.replace('border-slate-200', 'border-rose-300');
+                box.classList.replace('bg-slate-50', 'bg-rose-50');
+            } else {
+                disp.classList.remove('timer-pulse');
+                disp.style.color = 'inherit';
+                box.classList.replace('border-rose-300', 'border-slate-200');
+                box.classList.replace('bg-rose-50', 'bg-slate-50');
+            }
+        }
+
+        function submitAnswer() { 
+            if (!currentSelectedOption) return;
+            handleNext(false); 
+        }
+
+        function handleNext(isTimeout) {
+            if(timerInterval) clearInterval(timerInterval);
+
+            let correctOpt = questions[currentIndex].options.find(o => o.isCorrect);
+            let isBenar = (!isTimeout && currentSelectedOption && currentSelectedOption.isCorrect);
+
+            userAnswers.push({
+                qText: questions[currentIndex].text,
+                diff: questions[currentIndex].difficulty,
+                selected: isTimeout ? "WAKTU HABIS" : currentSelectedOption.text,
+                correct: correctOpt.text,
+                isCorrect: isBenar,
+                explanation: questions[currentIndex].explanation
+            });
+
+            if (isBenar) score += 10; 
+            currentIndex++;
+            
+            if (currentIndex < totalQuestions) {
+                const qs = document.getElementById('quiz-screen');
+                qs.classList.remove('fade-in'); void qs.offsetWidth; qs.classList.add('fade-in');
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            const res = document.getElementById('result-screen');
+            res.classList.remove('hidden'); res.classList.add('fade-in');
+
+            document.getElementById('final-score').innerText = score;
+            const cCount = userAnswers.filter(a => a.isCorrect).length;
+            document.getElementById('res-benar').innerText = `${cCount} Benar`;
+            document.getElementById('res-salah').innerText = `${totalQuestions - cCount} Salah`;
+
+            const container = document.getElementById('review-container');
+            container.innerHTML = '';
+
+            userAnswers.forEach((ans, idx) => {
+                const div = document.createElement('div');
+                div.className = `p-5 sm:p-7 rounded-[1.5rem] border-2 bg-white ${ans.isCorrect ? 'border-emerald-200' : 'border-rose-200'} shadow-sm relative overflow-hidden`;
+                div.innerHTML += `<div class="absolute left-0 top-0 bottom-0 w-3 ${ans.isCorrect ? 'bg-emerald-400' : 'bg-rose-400'}"></div>`;
+                
+                div.innerHTML += `
+                    <div class="flex flex-wrap items-center gap-3 mb-4 pl-3">
+                        <span class="bg-slate-100 text-slate-700 text-[11px] font-black px-3 py-1.5 rounded-md">SOAL ${idx+1}</span>
+                        <span class="text-[11px] font-black px-3 py-1.5 rounded-md border ${getDiffStyle(ans.diff)} uppercase">${ans.diff}</span>
+                        <span class="text-[11px] font-black px-3 py-1.5 rounded-md ml-auto ${ans.isCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'} uppercase tracking-widest">
+                            ${ans.isCorrect ? '✓ Benar' : '✗ Salah'}
+                        </span>
+                    </div>
+                    <p class="text-slate-800 font-bold mb-6 text-[15px] pl-3">${ans.qText}</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 pl-3">
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                            <span class="block text-[11px] text-slate-500 mb-1.5 uppercase font-black tracking-wider">Jawaban Anda</span>
+                            <span class="font-black text-[15px] ${ans.isCorrect ? 'text-emerald-600' : 'text-rose-600'}">${ans.selected}</span>
+                        </div>
+                        <div class="p-4 bg-rose-50 border border-rose-100 rounded-xl">
+                            <span class="block text-[11px] text-rose-600 mb-1.5 uppercase font-black tracking-wider">Kunci Jawaban</span>
+                            <span class="font-black text-[15px] text-rose-700">${ans.correct}</span>
+                        </div>
+                    </div>
+
+                    <div class="pl-3">
+                        ${ans.explanation}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function resetApp() {
+            document.getElementById('result-screen').classList.add('hidden');
+            const home = document.getElementById('home-screen');
+            home.classList.remove('hidden');
+            void home.offsetWidth; 
+            home.classList.add('fade-in');
+            
+            document.querySelectorAll('.cat-card').forEach(el => el.classList.remove('selected'));
+            selectedCategoryId = null;
+            selectedCategoryObj = null;
+            const btn = document.getElementById('start-btn');
+            btn.disabled = true;
+            btn.className = 'w-full bg-slate-200 text-slate-400 font-extrabold py-5 rounded-2xl cursor-not-allowed transition text-lg tracking-widest uppercase';
+            btn.innerText = 'Pilih Kategori Dulu';
+        }
+
+        window.onload = () => { initApp(); };
+    </script>
+</body>
+</html>

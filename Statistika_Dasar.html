@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master TIU - Statistika Dasar (Mean, Median, Modus)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            background-color: #f5f3ff; /* Violet 50 */
+            background-image: radial-gradient(#ddd6fe 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #ede9fe; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #a78bfa; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8b5cf6; }
+
+        .cat-card { transition: all 0.25s ease; border: 2px solid #ede9fe; }
+        .cat-card:hover { transform: translateY(-4px); border-color: #8b5cf6; box-shadow: 0 12px 20px -8px rgba(139, 92, 246, 0.3); }
+        .cat-card.selected { border-color: #6d28d9; background-color: #f5f3ff; box-shadow: 0 0 0 2px #6d28d9; }
+
+        .opt-btn { transition: all 0.2s ease; border: 2px solid #ede9fe; }
+        .opt-btn:hover:not(:disabled) { border-color: #a78bfa; background-color: #faf5ff; transform: scale(1.01); }
+        .opt-btn.selected { background-color: #6d28d9; color: white; border-color: #5b21b6; transform: scale(1.01); }
+        .opt-btn.selected .opt-letter { background-color: white; color: #6d28d9; border-color: white; }
+
+        .header-bg { 
+            background: linear-gradient(135deg, #2e1065 0%, #4c1d95 100%); 
+            border-bottom: 5px solid #8b5cf6;
+        }
+        
+        .timer-pulse { animation: pulseRed 1s infinite; }
+        @keyframes pulseRed { 0%, 100% { color: #e11d48; } 50% { color: #fca5a5; } }
+        
+        table.stat-table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; text-align: center; }
+        table.stat-table th { background-color: #6d28d9; color: white; padding: 8px; border: 1px solid #4c1d95; }
+        table.stat-table td { padding: 8px; border: 1px solid #ddd6fe; background-color: #f5f3ff; font-weight: 600;}
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex justify-center items-center py-8 px-4 sm:px-6">
+
+    <div class="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden relative border border-slate-100">
+        
+        <!-- HEADER -->
+        <div class="header-bg text-white p-6 sm:p-8 text-center relative">
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center justify-center gap-3">
+                <svg class="w-8 h-8 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                Statistika Dasar (Mean, Median, Modus)
+            </h1>
+            <p class="text-violet-200 mt-2 text-sm sm:text-base font-medium">Latihan Kasus Acak - 100% Dinamis & Jebakan Terselubung</p>
+        </div>
+
+        <!-- 1. HOME SCREEN -->
+        <div id="home-screen" class="p-6 sm:p-10 fade-in">
+            <!-- Pengaturan Waktu -->
+            <div class="mb-8 bg-violet-50/50 p-6 rounded-2xl border border-violet-100">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <span class="bg-violet-200 text-violet-800 px-3 py-1 rounded-lg text-sm">1</span> Target Waktu
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <label class="cursor-pointer relative">
+                        <input type="radio" name="timer" value="60" class="peer sr-only" checked>
+                        <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-violet-600 peer-checked:bg-violet-50 text-center h-full transition bg-white">
+                            <span class="block text-lg font-bold text-slate-700 peer-checked:text-violet-700">60 Detik</span>
+                            <span class="inline-block mt-1 text-xs font-bold bg-amber-100 text-amber-700 px-2 py-1 rounded-md">Ujian Cepat</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer relative">
+                        <input type="radio" name="timer" value="90" class="peer sr-only">
+                        <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-violet-600 peer-checked:bg-violet-50 text-center h-full transition bg-white">
+                            <span class="block text-lg font-bold text-slate-700 peer-checked:text-violet-700">90 Detik</span>
+                            <span class="inline-block mt-1 text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">Standar Normal</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer relative">
+                        <input type="radio" name="timer" value="0" class="peer sr-only">
+                        <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-violet-600 peer-checked:bg-violet-50 text-center h-full transition bg-white">
+                            <span class="block text-lg font-bold text-slate-700 peer-checked:text-violet-700">Tanpa Waktu</span>
+                            <span class="inline-block mt-1 text-xs font-bold text-white bg-violet-500 px-2 py-1 rounded-md">Latihan Bebas</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Pilih Kategori -->
+            <div class="mb-8">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <span class="bg-violet-200 text-violet-800 px-3 py-1 rounded-lg text-sm">2</span> Pilih Jenis Soal
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="category-grid">
+                    <!-- Cards dari JS -->
+                </div>
+            </div>
+
+            <button onclick="startQuiz()" id="start-btn" class="w-full bg-slate-200 text-slate-400 font-bold py-5 rounded-2xl transition text-lg cursor-not-allowed uppercase tracking-widest" disabled>
+                Pilih Kategori Dulu
+            </button>
+        </div>
+
+        <!-- 2. QUIZ SCREEN -->
+        <div id="quiz-screen" class="p-6 sm:p-10 hidden flex-col min-h-[500px]">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-2 border-slate-100 pb-4 mb-6 gap-4">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <span id="question-counter" class="bg-violet-900 text-white text-xs font-extrabold px-3 py-1.5 rounded-lg tracking-widest">SOAL 1/10</span>
+                        <span id="difficulty-badge" class="text-xs font-bold px-3 py-1.5 rounded-lg border uppercase tracking-wider">MUDAH</span>
+                    </div>
+                    <p id="quiz-category-title" class="text-sm text-slate-500 mt-2 font-bold">Kategori: -</p>
+                </div>
+                
+                <div id="timer-box-container">
+                    <div id="timer-box" class="flex items-center gap-2 bg-slate-50 text-slate-700 border-2 border-slate-200 px-4 py-2 rounded-xl font-bold transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <span id="timer-display" class="text-xl tabular-nums tracking-wider">01:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6 flex-grow flex flex-col">
+                <div class="bg-white p-6 sm:p-8 rounded-2xl border-2 border-violet-100 shadow-sm mb-6 text-slate-800 text-[1.1rem] leading-relaxed font-semibold" id="question-text">
+                    <!-- Teks Soal -->
+                </div>
+                
+                <div id="options-container" class="space-y-3 mt-auto">
+                    <!-- Tombol ABCDE -->
+                </div>
+            </div>
+
+            <button id="next-btn" onclick="submitAnswer()" class="w-full bg-slate-200 text-slate-400 font-extrabold py-5 rounded-2xl cursor-not-allowed transition text-lg tracking-widest uppercase" disabled>
+                PILIH JAWABAN
+            </button>
+        </div>
+
+        <!-- 3. RESULT SCREEN -->
+        <div id="result-screen" class="p-6 sm:p-10 hidden bg-violet-50/30">
+            <div class="text-center mb-10 bg-violet-900 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmYiLz48L3N2Zz4=')]"></div>
+                <h2 class="text-lg font-bold text-violet-300 mb-1 uppercase tracking-widest relative z-10">Skor Statistika</h2>
+                <div class="text-7xl font-black text-white my-3 tracking-tighter relative z-10" id="final-score">0</div>
+                <div class="inline-block mt-3 bg-black/30 text-white px-5 py-2 rounded-xl font-bold backdrop-blur-sm relative z-10">
+                    <span id="res-benar" class="text-emerald-400">0 Benar</span> &nbsp;|&nbsp; <span id="res-salah" class="text-rose-400">0 Salah</span>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="font-extrabold text-xl mb-6 text-slate-800 flex items-center gap-2 border-b-2 border-violet-200 pb-3">
+                    <svg class="w-6 h-6 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Evaluasi & Jebakan
+                </h3>
+                <div id="review-container" class="space-y-6">
+                    <!-- Review per soal -->
+                </div>
+            </div>
+
+            <button onclick="resetApp()" class="w-full bg-violet-800 hover:bg-violet-900 text-white font-extrabold py-5 rounded-2xl transition text-lg mt-4 shadow-xl uppercase tracking-widest">
+                KEMBALI KE MENU
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Data Pembantu
+        const names = ["Andi", "Budi", "Citra", "Deni", "Eka", "Fahmi", "Gita", "Hana", "Iwan", "Joko"];
+        
+        // 5 Kategori UI yang mencakup 15 Sub-Kasus
+        const categories = [
+            { id: 1, title: "Pemusatan Tunggal", desc: "Mean, Median, Modus (Nilai Ujian & Usia Peserta).", icon: "📊", subs: [1,2,3,4,5,6] },
+            { id: 2, title: "Waktu & Kinerja", desc: "Perhitungan waktu tempuh, lama tugas, & jumlah benar/salah.", icon: "⏱️", subs: [7,8,9,10] },
+            { id: 3, title: "Analisis Rata-Rata", desc: "Cari data hilang & manipulasi penambahan anggota baru.", icon: "🕵️", subs: [11,12] },
+            { id: 4, title: "Tabel & Gabungan", desc: "Rata-rata dua kelompok, komparasi, & tabel frekuensi.", icon: "📋", subs: [13,14,15] },
+            { id: 5, title: "CAMPURAN (Tryout)", desc: "15 Variasi soal acak. Sangat disarankan untuk simulasi.", icon: "🔥", isSpecial: true, subs: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] }
+        ];
+
+        let selectedCategoryId = null;
+        let timePerQuestion = 60;
+        let questions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+        let timerInterval;
+        let timeRemaining = 0;
+        let currentSelectedOption = null;
+        const totalQuestions = 10;
+
+        // Utilities
+        const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+        const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+        
+        // Fungsi generate Array yg jika di rata-rata hasilnya pas bulat
+        function genArrayWithMean(n, targetMean, min, max) {
+            let arr = [];
+            let sum = 0;
+            for(let i=0; i<n-1; i++) {
+                let v = randInt(min, max);
+                arr.push(v);
+                sum += v;
+            }
+            let last = (targetMean * n) - sum;
+            // Jika angka terakhir tidak masuk akal, ulang fungsi (rekursi aman)
+            if(last < min || last > max) return genArrayWithMean(n, targetMean, min, max);
+            arr.push(last);
+            return arr.sort(() => Math.random() - 0.5); // acak urutan array
+        }
+
+        function getMedian(arr) {
+            let s = [...arr].sort((a,b) => a-b);
+            let mid = Math.floor(s.length/2);
+            return s.length % 2 !== 0 ? s[mid] : (s[mid-1] + s[mid])/2;
+        }
+
+        // Generate Options (ABCDE) dg Shuffle
+        const genOptions = (correct, manualDistractors, unit = "") => {
+            let ops = new Set();
+            let cStr = (typeof correct === 'number' && correct % 1 !== 0) ? correct.toFixed(1) : correct.toString();
+            ops.add(cStr);
+            
+            for(let d of manualDistractors) {
+                let dStr = (typeof d === 'number' && d % 1 !== 0) ? d.toFixed(1) : d.toString();
+                if(ops.size < 5 && dStr !== cStr) ops.add(dStr);
+            }
+            
+            let isNum = !isNaN(parseFloat(correct));
+            let modifier = 1;
+            while(ops.size < 5) {
+                let fallback = isNum ? parseFloat(correct) + modifier : correct + "x";
+                let fStr = typeof fallback === 'number' && fallback % 1 !== 0 ? fallback.toFixed(1) : fallback.toString();
+                if(!ops.has(fStr)) ops.add(fStr);
+                modifier = modifier > 0 ? -modifier : (-modifier) + 1; // +1, -1, +2, -2
+            }
+
+            return Array.from(ops).map(x => ({ 
+                text: x + (unit ? ` ${unit}` : ''), 
+                isCorrect: x === cStr 
+            })).sort(() => Math.random() - 0.5); // PENGACAKAN OPSI
+        };
+
+        // CORE LOGIC 15 VARIASI
+        function createQuestion(subType) {
+            let q = { category: subType };
+            
+            switch(subType) {
+                case 1: { // Rata-rata nilai ujian
+                    q.difficulty = 'Mudah';
+                    let n = rand([5, 6, 7]);
+                    let targetMean = rand([75, 80, 82, 85]);
+                    let arr = genArrayWithMean(n, targetMean, 60, 100);
+                    let trapSum = arr.reduce((a,b)=>a+b,0);
+                    let trapWrongN = trapSum / (n-1);
+                    
+                    q.text = `Data nilai ujian Matematika dari ${n} orang siswa adalah sebagai berikut: <b>${arr.join(', ')}</b>. Berapakah nilai rata-rata ujian dari kelompok tersebut?`;
+                    q.options = genOptions(targetMean, [trapWrongN, targetMean-2, targetMean+5]);
+                    q.explanation = `<b>Rumus Rata-rata (Mean):</b> Jumlah Data / Banyak Data.<br>Jumlah nilai = ${arr.join(' + ')} = ${trapSum}.<br>Banyak data (n) = ${n}.<br>Rata-rata = ${trapSum} / ${n} = <b>${targetMean}</b>.`;
+                    break;
+                }
+                case 2: { // Median nilai ujian (Harus diurutkan)
+                    q.difficulty = 'Sedang';
+                    let n = rand([6, 7, 8]); // ganjil & genap acak
+                    let arr = [];
+                    for(let i=0; i<n; i++) arr.push(randInt(60, 95));
+                    let ans = getMedian(arr);
+                    
+                    // Jebakan: ambil tengah tanpa mengurutkan
+                    let midIndex = Math.floor(n/2);
+                    let trapUnsorted = n%2!==0 ? arr[midIndex] : (arr[midIndex-1]+arr[midIndex])/2;
+                    
+                    q.text = `Seorang guru mencatat hasil ujian beberapa peserta seleksi. Nilai yang diperoleh adalah: <b>${arr.join(', ')}</b>. Median (nilai tengah) dari data tersebut adalah ...`;
+                    q.options = genOptions(ans, [trapUnsorted, ans+1, ans-2]);
+                    q.explanation = `<b>Awas Jebakan Median!</b> Data <b>WAJIB</b> diurutkan dari terkecil ke terbesar terlebih dahulu sebelum mencari nilai tengah.<br>Data terurut: ${[...arr].sort((a,b)=>a-b).join(', ')}.<br>Karena jumlah data ada ${n}, nilai tengahnya adalah <b>${ans}</b>.`;
+                    break;
+                }
+                case 3: { // Modus nilai
+                    q.difficulty = 'Mudah';
+                    let baseVals = [70, 75, 80, 85, 90, 95];
+                    let modeVal = rand(baseVals);
+                    let arr = [modeVal, modeVal, modeVal]; // pasti 3 kali
+                    for(let i=0; i<4; i++) {
+                        let v = rand(baseVals);
+                        if(v !== modeVal) arr.push(v);
+                    }
+                    arr.sort(() => Math.random() - 0.5);
+                    
+                    let highestVal = Math.max(...arr); // Jebakan sering: milih nilai tertinggi
+                    
+                    q.text = `Berikut adalah data nilai ulangan Harian peserta: <b>${arr.join(', ')}</b>. Modus dari nilai ulangan tersebut adalah ...`;
+                    q.options = genOptions(modeVal, [highestVal, highestVal-5]);
+                    q.explanation = `<b>Modus</b> adalah nilai yang paling sering muncul (frekuensi tertinggi), BUKAN nilai yang paling besar.<br>Angka ${modeVal} muncul sebanyak 3 kali (paling banyak). Maka modusnya adalah <b>${modeVal}</b>.`;
+                    break;
+                }
+                case 4: { // Mean Usia
+                    q.difficulty = 'Mudah';
+                    let n = rand([4, 5, 6]);
+                    let meanUsia = rand([22, 24, 25, 26]);
+                    let arr = genArrayWithMean(n, meanUsia, 18, 32);
+                    let sum = arr.reduce((a,b)=>a+b,0);
+                    
+                    q.text = `Sebuah tim peneliti terdiri dari ${n} anggota. Usia masing-masing anggota (dalam tahun) adalah: <b>${arr.join(', ')}</b>. Berapakah rata-rata usia anggota di kelompok ini?`;
+                    q.options = genOptions(meanUsia, [sum/(n+1), meanUsia-1], "tahun");
+                    q.explanation = `Jumlah usia seluruh anggota = ${sum}. Dibagi jumlah anggota (${n}). Rata-rata = ${sum} / ${n} = <b>${meanUsia} tahun</b>.`;
+                    break;
+                }
+                case 5: { // Median Usia Peserta
+                    q.difficulty = 'Sedang';
+                    let arr = [18, 19, 21, 22, 25, 26, 28, 30].sort(()=>Math.random()-0.5).slice(0, 6); 
+                    // 6 item genap = harus dirata-rata 2 tengah
+                    let ans = getMedian(arr);
+                    let midIndex = 3;
+                    let trapUnsorted = (arr[midIndex-1] + arr[midIndex])/2;
+                    
+                    q.text = `Usia pendaftar tes CPNS di suatu formasi adalah: <b>${arr.join(', ')}</b>. Median usia dari pelamar tersebut adalah ...`;
+                    q.options = genOptions(ans, [trapUnsorted, ans+0.5], "tahun");
+                    q.explanation = `<b>Langkah Median Data Genap:</b><br>1. Urutkan: ${[...arr].sort((a,b)=>a-b).join(', ')}.<br>2. Karena ada 6 data (genap), ambil 2 angka di tengah lalu bagi dua.<br>Median = (${[...arr].sort((a,b)=>a-b)[2]} + ${[...arr].sort((a,b)=>a-b)[3]}) / 2 = <b>${ans} tahun</b>.`;
+                    break;
+                }
+                case 6: { // Modus Berat/Tinggi
+                    q.difficulty = 'Mudah';
+                    let modeBB = rand([55, 60, 65, 70]);
+                    let arr = [modeBB, modeBB, modeBB, modeBB]; // freq 4
+                    let lainnya = [50, 52, 75, 80, 85].sort(()=>Math.random()-0.5).slice(0,3);
+                    arr.push(...lainnya);
+                    arr.sort(()=>Math.random()-0.5);
+                    
+                    let trapFreq = 4; // Jebakan: milih jumlah munculnya (4) bukan beratnya
+
+                    q.text = `Hasil pengukuran berat badan (kg) 7 orang peserta seleksi fisik Polri adalah sebagai berikut: <b>${arr.join(', ')}</b>. Modus dari data berat badan tersebut adalah ...`;
+                    q.options = genOptions(modeBB, [trapFreq, Math.max(...arr)], "kg");
+                    q.explanation = `Modus adalah angka yang paling sering muncul. Berat <b>${modeBB} kg</b> muncul paling banyak (4 kali).<br><i>Awas Jebakan:</i> Jangan menjawab 4, karena 4 adalah frekuensinya, bukan datanya.`;
+                    break;
+                }
+                case 7: { // Rata2 Waktu Tempuh
+                    q.difficulty = 'Sedang';
+                    let n = 5;
+                    let target = rand([45, 50, 60]);
+                    let arr = genArrayWithMean(n, target, 30, 80);
+                    let sum = arr.reduce((a,b)=>a+b,0);
+                    let trapHighestLowest = (Math.max(...arr) + Math.min(...arr))/2; // jebakan rata2 max min
+                    
+                    q.text = `Seseorang mencatat waktu tempuhnya dari rumah ke kantor selama ${n} hari kerja berturut-turut (dalam menit): <b>${arr.join(', ')}</b>. Rata-rata waktu tempuh perjalanan orang tersebut adalah ...`;
+                    q.options = genOptions(target, [trapHighestLowest, target-2], "menit");
+                    q.explanation = `Jumlah waktu 5 hari = ${sum} menit.<br>Rata-rata = ${sum} / 5 hari = <b>${target} menit</b>.`;
+                    break;
+                }
+                case 8: { // Median Waktu Penyelesaian
+                    q.difficulty = 'Sedang';
+                    let arr = [12, 14, 15, 18, 20, 22, 25].sort(()=>Math.random()-0.5);
+                    let ans = getMedian(arr);
+                    let trapUnsorted = arr[3]; 
+
+                    q.text = `Tujuh regu menyelesaikan tugas lapangan dengan catatan waktu (menit) sebagai berikut: <b>${arr.join(', ')}</b>. Median waktu penyelesaian tugas tersebut adalah ...`;
+                    q.options = genOptions(ans, [trapUnsorted, ans+1], "menit");
+                    q.explanation = `Urutkan waktu dari yang tercepat: ${[...arr].sort((a,b)=>a-b).join(', ')}.<br>Karena jumlahnya ganjil (7), nilai tengah ada di posisi ke-4, yaitu <b>${ans} menit</b>.`;
+                    break;
+                }
+                case 9: { // Modus Jumlah Kesalahan
+                    q.difficulty = 'Mudah';
+                    let modeKesalahan = rand([0, 1, 2]);
+                    let arr = [modeKesalahan, modeKesalahan, modeKesalahan, modeKesalahan, 3, 4, 5];
+                    arr.sort(()=>Math.random()-0.5);
+                    let tMax = 5; // trap nilai max
+
+                    q.text = `Dalam sesi latihan menembak, pelatih mencatat jumlah kesalahan tembakan (luar target) dari 7 peserta: <b>${arr.join(', ')}</b>. Modus kesalahan dalam latihan tersebut adalah ...`;
+                    q.options = genOptions(modeKesalahan, [tMax, modeKesalahan+1], "kesalahan");
+                    q.explanation = `Angka <b>${modeKesalahan}</b> muncul terbanyak (4 kali). Jadi modusnya adalah ${modeKesalahan} kesalahan.`;
+                    break;
+                }
+                case 10: { // Mean Soal Benar
+                    q.difficulty = 'Sedang';
+                    let n = 4;
+                    let target = rand([70, 75, 80]);
+                    let arr = genArrayWithMean(n, target, 50, 95);
+                    
+                    q.text = `Dalam 4 kali *Tryout* SKD, jumlah soal yang dijawab benar oleh ${rand(names)} berturut-turut adalah: <b>${arr.join(', ')}</b>. Berapakah rata-rata soal yang dijawab benar?`;
+                    q.options = genOptions(target, [target-1, target+2], "soal");
+                    q.explanation = `Total soal benar = ${arr.reduce((a,b)=>a+b,0)}.<br>Rata-rata = Total / 4 = <b>${target} soal</b>.`;
+                    break;
+                }
+                case 11: { // Cari data hilang
+                    q.difficulty = 'HOTS 🔥';
+                    let n = rand([4, 5]);
+                    let targetMean = rand([80, 82, 85]);
+                    let sumTotal = n * targetMean;
+                    let arr = [];
+                    let sumKnown = 0;
+                    for(let i=0; i<n-1; i++) {
+                        let v = randInt(70, 90);
+                        arr.push(v);
+                        sumKnown += v;
+                    }
+                    let ans = sumTotal - sumKnown;
+                    let trapMean = targetMean; // jebakan ngisi sama dgn rata2
+                    let trapTotal = sumTotal; // jebakan jumlah total
+
+                    q.text = `Nilai rata-rata ujian dari ${n} mata pelajaran adalah ${targetMean}. Jika nilai ${n-1} mata pelajaran pertama adalah <b>${arr.join(', ')}</b>, berapakah nilai mata pelajaran yang terakhir (ke-${n})?`;
+                    q.options = genOptions(ans, [trapMean, trapTotal, ans-5]);
+                    q.explanation = `<b>Konsep Total Nilai:</b><br>Jika rata-rata ${n} mapel = ${targetMean}, maka Total Nilai Seharusnya = ${n} × ${targetMean} = ${sumTotal}.<br>Total nilai yang sudah ada = ${arr.join(' + ')} = ${sumKnown}.<br>Nilai mapel terakhir = ${sumTotal} - ${sumKnown} = <b>${ans}</b>.`;
+                    break;
+                }
+                case 12: { // Menentukan Nilai Baru (Ubah Mean)
+                    q.difficulty = 'HOTS 🔥';
+                    let nAwal = rand([5, 6, 8, 10]);
+                    let meanAwal = rand([75, 78, 80]);
+                    let meanBaru = meanAwal + rand([1, 2]); // naik
+                    let sumAwal = nAwal * meanAwal;
+                    let sumBaru = (nAwal + 1) * meanBaru;
+                    let nilaiBaru = sumBaru - sumAwal;
+                    
+                    let trapSelisih = meanBaru - meanAwal; // jebakan
+                    let trapSama = meanBaru; // jebakan
+
+                    q.text = `Rata-rata nilai ujian dari ${nAwal} orang siswa adalah ${meanAwal}. Setelah nilai ${rand(names)} (siswa susulan) digabungkan, rata-rata kelompok tersebut naik menjadi ${meanBaru}. Berapakah nilai ujian ${rand(names)}?`;
+                    q.options = genOptions(nilaiBaru, [trapSelisih, trapSama, nilaiBaru-meanAwal]);
+                    q.explanation = `<b>Logika Jumlah Total:</b><br>1. Total awal (${nAwal} siswa) = ${nAwal} × ${meanAwal} = ${sumAwal}.<br>2. Total baru (${nAwal+1} siswa) = ${nAwal+1} × ${meanBaru} = ${sumBaru}.<br>3. Nilai anak susulan = Total Baru - Total Awal = ${sumBaru} - ${sumAwal} = <b>${nilaiBaru}</b>.`;
+                    break;
+                }
+                case 13: { // Rata-rata Gabungan
+                    q.difficulty = 'HOTS 🔥';
+                    let n1 = rand([10, 20]);
+                    let mean1 = rand([70, 75]);
+                    let n2 = rand([15, 20, 30]); // pastikan n1+n2 enak dibagi (misal 10+20=30, 20+30=50)
+                    if (n1===10) n2 = 20; else n2 = 30; // set manual biar bulat/rapi
+                    let mean2 = rand([80, 85]);
+                    
+                    let totalOrang = n1 + n2;
+                    let totalNilai = (n1*mean1) + (n2*mean2);
+                    let meanGabungan = totalNilai / totalOrang;
+                    
+                    let trapTengah = (mean1 + mean2) / 2; // Jebakan super klasik (ditambah lalu bagi 2)
+
+                    q.text = `Rata-rata nilai kelas A yang terdiri dari ${n1} siswa adalah ${mean1}. Sedangkan rata-rata kelas B yang terdiri dari ${n2} siswa adalah ${mean2}. Jika nilai kedua kelas digabungkan, berapakah rata-rata gabungannya?`;
+                    q.options = genOptions(meanGabungan, [trapTengah, meanGabungan-1]);
+                    q.explanation = `<b>Awas Jebakan:</b> Jangan langsung menambahkan ${mean1}+${mean2} lalu dibagi 2! Jumlah siswa mereka berbeda.<br><b>Rumus Gabungan:</b><br>Total Kelas A = ${n1} × ${mean1} = ${n1*mean1}.<br>Total Kelas B = ${n2} × ${mean2} = ${n2*mean2}.<br>Total Keseluruhan = ${n1*mean1} + ${n2*mean2} = ${totalNilai}.<br>Mean Gabungan = ${totalNilai} / ${totalOrang} siswa = <b>${meanGabungan}</b>.`;
+                    break;
+                }
+                case 14: { // Tabel Frekuensi (Mean / Median / Modus)
+                    q.difficulty = 'HOTS 🔥';
+                    // Kita buat tabel yang jumlah N nya ganjil enak dicari median, 
+                    // dan jumlah (N*f) bulat utk Mean.
+                    let baseData = [
+                        { v: 6, f: 2 }, { v: 7, f: 5 }, { v: 8, f: 4 }, { v: 9, f: 1 } 
+                    ]; // Total f = 12. 
+                    let tableHTML = `
+                        <table class="stat-table mx-auto w-[80%] max-w-[300px]">
+                            <tr><th>Nilai</th><th>Frekuensi</th></tr>
+                            ${baseData.map(d => `<tr><td>${d.v}</td><td>${d.f}</td></tr>`).join('')}
+                        </table>
+                    `;
+                    
+                    let tanya = rand(['Median', 'Modus']);
+                    let ans, exp, trap1, trap2;
+                    
+                    if (tanya === 'Modus') {
+                        ans = 7;
+                        trap1 = 5; // nilai frekuensinya
+                        trap2 = 9; // nilai terbesar
+                        exp = `Modus adalah nilai dengan Frekuensi tertinggi. Dari tabel, frekuensi tertinggi adalah 5, yang dimiliki oleh <b>Nilai 7</b>.`;
+                    } else { // Median
+                        ans = 7; // total f=12. Median = data ke 6 & 7 / 2. Data 1-2(nilai 6). Data 3-7(nilai 7).
+                        trap1 = 7.5; // (7+8)/2 jebakan ngambil tengah nilai
+                        trap2 = 6;
+                        exp = `Total frekuensi (N) = 2+5+4+1 = 12.<br>Median berada di antara data ke-6 dan ke-7.<br>Data 1-2 bernilai 6.<br>Data 3-7 bernilai 7.<br>Karena data ke-6 dan ke-7 keduanya bernilai 7, maka Median = <b>7</b>.`;
+                    }
+                    
+                    q.text = `Perhatikan tabel hasil ujian matematika di bawah ini:<br>${tableHTML}<br>Berdasarkan tabel di atas, tentukan <b>${tanya}</b> dari data tersebut!`;
+                    q.options = genOptions(ans, [trap1, trap2]);
+                    q.explanation = exp;
+                    break;
+                }
+                case 15: { // Komparasi Dua Kelompok
+                    q.difficulty = 'Sedang';
+                    let meanA = rand([75, 80]);
+                    let meanB = meanA + rand([3, 4, 5]);
+                    
+                    let n = 5;
+                    let arrA = genArrayWithMean(n, meanA, 60, 90);
+                    let arrB = genArrayWithMean(n, meanB, 65, 95);
+                    
+                    let selisihMean = meanB - meanA;
+                    
+                    // Trap: selisih jumlah total
+                    let selisihTotal = (n*meanB) - (n*meanA);
+
+                    q.text = `Terdapat dua kelompok data.<br>Kelompok X: <b>${arrA.join(', ')}</b><br>Kelompok Y: <b>${arrB.join(', ')}</b><br>Berapakah <b>selisih rata-rata</b> antara Kelompok X dan Kelompok Y?`;
+                    q.options = genOptions(selisihMean, [selisihTotal, selisihMean+1]);
+                    q.explanation = `1. Rata-rata X = ${n*meanA} / 5 = ${meanA}.<br>2. Rata-rata Y = ${n*meanB} / 5 = ${meanB}.<br>Selisih rata-rata = ${meanB} - ${meanA} = <b>${selisihMean}</b>.`;
+                    break;
+                }
+            }
+            return q;
+        }
+
+        function initApp() {
+            const grid = document.getElementById('category-grid');
+            categories.forEach(c => {
+                const card = document.createElement('div');
+                let styleClass = c.isSpecial ? 'bg-violet-100 border-violet-300' : 'bg-white';
+                
+                card.className = `cat-card cursor-pointer rounded-2xl p-5 relative ${styleClass}`;
+                card.onclick = () => selectCategory(c, card);
+                
+                card.innerHTML = `
+                    <div class="flex flex-col h-full">
+                        <div class="text-4xl mb-3 drop-shadow-sm">${c.icon}</div>
+                        <h3 class="font-extrabold text-slate-800 ${c.isSpecial ? 'text-violet-800' : ''}">${c.title}</h3>
+                        <p class="text-[13px] text-slate-500 mt-2 font-bold leading-relaxed">${c.desc}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        let selectedCategoryObj = null;
+        function selectCategory(catObj, cardElem) {
+            document.querySelectorAll('.cat-card').forEach(el => el.classList.remove('selected'));
+            cardElem.classList.add('selected');
+            selectedCategoryId = catObj.id;
+            selectedCategoryObj = catObj;
+
+            const btn = document.getElementById('start-btn');
+            btn.disabled = false;
+            btn.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+            btn.classList.add('bg-violet-700', 'hover:bg-violet-800', 'text-white', 'shadow-xl');
+            btn.innerText = "MULAI TRYOUT SEKARANG";
+        }
+
+        function startQuiz() {
+            timePerQuestion = parseInt(document.querySelector('input[name="timer"]:checked').value);
+            questions = [];
+            
+            for(let i=0; i<totalQuestions; i++) {
+                // Pilih sub-kategori acak berdasarkan pilihan kategori (UI)
+                let subId = rand(selectedCategoryObj.subs);
+                questions.push(createQuestion(subId));
+            }
+
+            currentIndex = 0; score = 0; userAnswers = [];
+
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('quiz-screen').classList.add('fade-in');
+            
+            document.getElementById('quiz-category-title').innerText = `Kategori: ${selectedCategoryObj.title}`;
+
+            renderQuestion();
+        }
+
+        function getDiffStyle(diff) {
+            if(diff === 'Mudah') return 'bg-sky-100 text-sky-700 border-sky-200';
+            if(diff === 'Sedang') return 'bg-amber-100 text-amber-700 border-amber-200';
+            return 'bg-rose-100 text-rose-700 border-rose-200'; 
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            document.getElementById('question-counter').innerText = `SOAL ${currentIndex + 1}/${totalQuestions}`;
+            
+            const badge = document.getElementById('difficulty-badge');
+            badge.className = `text-[11px] font-extrabold px-3 py-1.5 rounded-lg border ${getDiffStyle(q.difficulty)} uppercase tracking-wider`;
+            badge.innerText = q.difficulty;
+
+            document.getElementById('question-text').innerHTML = q.text;
+            
+            const optCont = document.getElementById('options-container');
+            optCont.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                const letter = String.fromCharCode(65 + idx);
+                btn.className = 'opt-btn w-full text-left p-4 sm:p-5 rounded-2xl font-bold text-slate-700 flex items-center gap-4 bg-white shadow-sm';
+                btn.innerHTML = `<span class="opt-letter w-9 h-9 rounded-xl bg-violet-100 flex items-center justify-center font-black text-violet-600 text-sm border border-violet-200">${letter}</span> <span class="flex-1 text-[1.05rem]">${opt.text}</span>`;
+                btn.onclick = () => selectOption(btn, opt);
+                optCont.appendChild(btn);
+            });
+
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = true;
+            nextBtn.className = 'w-full bg-slate-200 text-slate-400 font-extrabold py-5 rounded-2xl cursor-not-allowed transition text-lg tracking-widest uppercase';
+            nextBtn.innerText = 'PILIH JAWABAN';
+
+            currentSelectedOption = null;
+            startTimer();
+        }
+
+        function selectOption(btnElement, optionData) {
+            document.querySelectorAll('.opt-btn').forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+            currentSelectedOption = optionData;
+
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = false;
+            nextBtn.className = 'w-full bg-violet-600 hover:bg-violet-700 text-white font-extrabold py-5 rounded-2xl shadow-lg transition transform active:scale-[0.99] text-lg uppercase tracking-widest';
+            nextBtn.innerText = currentIndex === totalQuestions - 1 ? 'SELESAI & LIHAT SKOR' : 'KUNCI JAWABAN & LANJUT';
+        }
+
+        function startTimer() {
+            if(timerInterval) clearInterval(timerInterval);
+            const tContainer = document.getElementById('timer-box-container');
+            
+            if (timePerQuestion === 0) {
+                tContainer.classList.add('hidden');
+                return;
+            }
+            
+            tContainer.classList.remove('hidden');
+            timeRemaining = timePerQuestion;
+            updateTimerUI();
+
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerUI();
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    handleNext(true); 
+                }
+            }, 1000);
+        }
+
+        function updateTimerUI() {
+            const m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
+            const s = (timeRemaining % 60).toString().padStart(2, '0');
+            const box = document.getElementById('timer-box');
+            const disp = document.getElementById('timer-display');
+            
+            disp.innerText = `${m}:${s}`;
+            
+            if(timeRemaining <= 10) {
+                disp.classList.add('timer-pulse');
+                box.classList.replace('border-slate-200', 'border-rose-300');
+                box.classList.replace('bg-slate-50', 'bg-rose-50');
+            } else {
+                disp.classList.remove('timer-pulse');
+                disp.style.color = 'inherit';
+                box.classList.replace('border-rose-300', 'border-slate-200');
+                box.classList.replace('bg-rose-50', 'bg-slate-50');
+            }
+        }
+
+        function submitAnswer() { 
+            if (!currentSelectedOption) return;
+            handleNext(false); 
+        }
+
+        function handleNext(isTimeout) {
+            if(timerInterval) clearInterval(timerInterval);
+
+            let correctOpt = questions[currentIndex].options.find(o => o.isCorrect);
+            let isBenar = (!isTimeout && currentSelectedOption && currentSelectedOption.isCorrect);
+
+            userAnswers.push({
+                qText: questions[currentIndex].text,
+                diff: questions[currentIndex].difficulty,
+                selected: isTimeout ? "WAKTU HABIS" : currentSelectedOption.text,
+                correct: correctOpt.text,
+                isCorrect: isBenar,
+                explanation: questions[currentIndex].explanation
+            });
+
+            if (isBenar) score += 10; 
+
+            currentIndex++;
+            if (currentIndex < totalQuestions) {
+                const qs = document.getElementById('quiz-screen');
+                qs.classList.remove('fade-in'); void qs.offsetWidth; qs.classList.add('fade-in');
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            const res = document.getElementById('result-screen');
+            res.classList.remove('hidden'); res.classList.add('fade-in');
+
+            document.getElementById('final-score').innerText = score;
+            const cCount = userAnswers.filter(a => a.isCorrect).length;
+            document.getElementById('res-benar').innerText = `${cCount} Benar`;
+            document.getElementById('res-salah').innerText = `${totalQuestions - cCount} Salah`;
+
+            const container = document.getElementById('review-container');
+            container.innerHTML = '';
+
+            userAnswers.forEach((ans, idx) => {
+                const div = document.createElement('div');
+                div.className = `p-5 sm:p-7 rounded-[1.5rem] border-2 bg-white ${ans.isCorrect ? 'border-emerald-200' : 'border-rose-200'} shadow-sm relative overflow-hidden`;
+                div.innerHTML += `<div class="absolute left-0 top-0 bottom-0 w-3 ${ans.isCorrect ? 'bg-emerald-400' : 'bg-rose-400'}"></div>`;
+                
+                div.innerHTML += `
+                    <div class="flex flex-wrap items-center gap-3 mb-4 pl-3">
+                        <span class="bg-slate-100 text-slate-700 text-[11px] font-black px-3 py-1.5 rounded-md">SOAL ${idx+1}</span>
+                        <span class="text-[11px] font-black px-3 py-1.5 rounded-md border ${getDiffStyle(ans.diff)} uppercase">${ans.diff}</span>
+                        <span class="text-[11px] font-black px-3 py-1.5 rounded-md ml-auto ${ans.isCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'} uppercase tracking-widest">
+                            ${ans.isCorrect ? '✓ Benar' : '✗ Salah'}
+                        </span>
+                    </div>
+                    <p class="text-slate-800 font-bold mb-6 text-[15px] pl-3">${ans.qText}</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 pl-3">
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                            <span class="block text-[11px] text-slate-500 mb-1.5 uppercase font-black tracking-wider">Jawaban Anda</span>
+                            <span class="font-black text-[15px] ${ans.isCorrect ? 'text-emerald-600' : 'text-rose-600'}">${ans.selected}</span>
+                        </div>
+                        <div class="p-4 bg-violet-50 border border-violet-100 rounded-xl">
+                            <span class="block text-[11px] text-violet-600 mb-1.5 uppercase font-black tracking-wider">Kunci Jawaban</span>
+                            <span class="font-black text-[15px] text-violet-700">${ans.correct}</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-violet-900 p-5 rounded-2xl ml-3 shadow-inner">
+                        <p class="font-extrabold text-violet-300 mb-2 text-sm flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Penjelasan Evaluasi
+                        </p>
+                        <div class="text-violet-100 text-[14px] leading-relaxed font-semibold">${ans.explanation}</div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function resetApp() {
+            document.getElementById('result-screen').classList.add('hidden');
+            const home = document.getElementById('home-screen');
+            home.classList.remove('hidden');
+            void home.offsetWidth; 
+            home.classList.add('fade-in');
+            
+            document.querySelectorAll('.cat-card').forEach(el => el.classList.remove('selected'));
+            selectedCategoryId = null;
+            selectedCategoryObj = null;
+            const btn = document.getElementById('start-btn');
+            btn.disabled = true;
+            btn.className = 'w-full bg-slate-200 text-slate-400 font-extrabold py-5 rounded-2xl cursor-not-allowed transition text-lg tracking-widest uppercase';
+            btn.innerText = 'Pilih Kategori Dulu';
+        }
+
+        window.onload = () => { initApp(); };
+    </script>
+</body>
+</html>
