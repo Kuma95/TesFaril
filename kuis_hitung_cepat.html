@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Hitung Cepat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .input-animated:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.3);
+            border-color: #6366f1;
+        }
+        /* Custom animations */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .shake-animation {
+            animation: shake 0.3s ease-in-out;
+        }
+        @keyframes pop {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pop-in {
+            animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="p-4 text-gray-800">
+
+    <main class="glass-card w-full max-w-lg p-6 sm:p-8 mx-auto relative overflow-hidden pop-in">
+        
+        <!-- === SCREEN 1: PENGATURAN (MENU UTAMA) === -->
+        <section id="menu-screen" class="block">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-indigo-700 mb-2">⚡ Hitung Cepat</h1>
+                <p class="text-gray-500 text-sm">Uji kecepatan dan ketepatan berhitungmu!</p>
+            </div>
+
+            <div class="space-y-5">
+                <!-- Pengaturan Waktu -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Waktu Per Soal</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button class="time-btn bg-indigo-100 text-indigo-700 hover:bg-indigo-200 py-2 rounded-lg font-semibold transition ring-2 ring-transparent focus:outline-none" data-val="10">10 Detik</button>
+                        <button class="time-btn bg-indigo-100 text-indigo-700 hover:bg-indigo-200 py-2 rounded-lg font-semibold transition ring-2 ring-transparent focus:outline-none" data-val="20">20 Detik</button>
+                        <button class="time-btn bg-indigo-600 text-white py-2 rounded-lg font-semibold transition ring-2 ring-indigo-300 focus:outline-none" data-val="0">Tanpa Waktu</button>
+                    </div>
+                </div>
+
+                <!-- Pengaturan Kategori -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Kategori Operasi</label>
+                    <select id="category-select" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-3">
+                        <option value="campuran">🎲 Campuran (Semua)</option>
+                        <option value="tambah">➕ Penjumlahan</option>
+                        <option value="kurang">➖ Pengurangan</option>
+                        <option value="kali">✖️ Perkalian</option>
+                        <option value="bagi">➗ Pembagian</option>
+                    </select>
+                </div>
+
+                <!-- Pengaturan Kesulitan -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Tingkat Kesulitan</label>
+                    <select id="difficulty-select" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-3">
+                        <option value="mudah">🌱 Mudah</option>
+                        <option value="sedang">🌿 Sedang</option>
+                        <option value="sulit">🔥 Sulit</option>
+                        <option value="hots">🧠 HOTS (Kompleks)</option>
+                    </select>
+                </div>
+
+                <button id="start-btn" class="w-full mt-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 rounded-xl shadow-lg transition-transform transform hover:-translate-y-1 active:translate-y-0">
+                    Mulai Kuis 🚀
+                </button>
+            </div>
+        </section>
+
+        <!-- === SCREEN 2: GAMEPLAY === -->
+        <section id="game-screen" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <div class="bg-gray-100 px-4 py-2 rounded-lg">
+                    <span class="text-sm text-gray-500 block">Skor</span>
+                    <span id="score-display" class="text-xl font-bold text-indigo-700">0</span>
+                </div>
+                <div id="timer-container" class="bg-red-50 px-4 py-2 rounded-lg text-center hidden">
+                    <span class="text-sm text-red-500 block">Waktu</span>
+                    <span id="timer-display" class="text-xl font-bold text-red-600">--</span>
+                </div>
+                <div class="bg-gray-100 px-4 py-2 rounded-lg text-right">
+                    <span class="text-sm text-gray-500 block">Soal</span>
+                    <span id="question-count-display" class="text-xl font-bold text-gray-700">1/10</span>
+                </div>
+            </div>
+
+            <div class="text-center my-10">
+                <h2 id="math-question" class="text-4xl sm:text-5xl font-extrabold text-gray-800 tracking-wider">
+                    <!-- Question will appear here -->
+                </h2>
+            </div>
+
+            <form id="answer-form" class="space-y-4">
+                <input type="number" id="answer-input" autocomplete="off" class="input-animated w-full text-center text-3xl font-bold py-4 bg-gray-50 border-2 border-gray-200 rounded-xl transition" placeholder="?" required>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-md transition">
+                    Jawab (Enter)
+                </button>
+            </form>
+            
+            <p id="feedback-msg" class="text-center font-semibold mt-4 h-6 opacity-0 transition-opacity duration-200"></p>
+        </section>
+
+        <!-- === SCREEN 3: HASIL (RESULT) === -->
+        <section id="result-screen" class="hidden text-center">
+            <div class="mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-indigo-100 rounded-full mb-4">
+                    <span class="text-4xl">🏆</span>
+                </div>
+                <h2 class="text-3xl font-extrabold text-gray-800 mb-2">Kuis Selesai!</h2>
+                <p class="text-gray-500">Berikut adalah hasil perhitungan cepatmu.</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-xl p-6 mb-8 border border-gray-100 shadow-inner">
+                <div class="text-sm text-gray-500 uppercase tracking-wide font-semibold mb-1">Skor Akhir</div>
+                <div id="final-score" class="text-6xl font-black text-indigo-600 mb-4">0</div>
+                <div class="grid grid-cols-2 gap-4 text-left">
+                    <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+                        <span class="text-xs text-green-500 font-bold block">Benar</span>
+                        <span id="correct-count" class="text-xl font-bold text-gray-800">0</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+                        <span class="text-xs text-red-500 font-bold block">Salah/Lewat</span>
+                        <span id="wrong-count" class="text-xl font-bold text-gray-800">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <button id="restart-btn" class="w-full bg-gray-900 hover:bg-black text-white font-bold py-4 rounded-xl shadow-lg transition">
+                Main Lagi 🔄
+            </button>
+        </section>
+
+    </main>
+
+    <script>
+        // --- GAME STATE ---
+        const state = {
+            timeMode: 0, // 0 = no time, 10 = 10s, 20 = 20s
+            category: 'campuran',
+            difficulty: 'mudah',
+            score: 0,
+            correct: 0,
+            wrong: 0,
+            currentQuestion: 1,
+            maxQuestions: 10,
+            timer: null,
+            timeLeft: 0,
+            correctAnswer: 0,
+            isPlaying: false
+        };
+
+        // --- DOM ELEMENTS ---
+        const screens = {
+            menu: document.getElementById('menu-screen'),
+            game: document.getElementById('game-screen'),
+            result: document.getElementById('result-screen')
+        };
+        
+        // Menu Elements
+        const timeBtns = document.querySelectorAll('.time-btn');
+        const categorySelect = document.getElementById('category-select');
+        const difficultySelect = document.getElementById('difficulty-select');
+        const startBtn = document.getElementById('start-btn');
+
+        // Game Elements
+        const scoreDisplay = document.getElementById('score-display');
+        const timerContainer = document.getElementById('timer-container');
+        const timerDisplay = document.getElementById('timer-display');
+        const questionCountDisplay = document.getElementById('question-count-display');
+        const mathQuestion = document.getElementById('math-question');
+        const answerForm = document.getElementById('answer-form');
+        const answerInput = document.getElementById('answer-input');
+        const feedbackMsg = document.getElementById('feedback-msg');
+
+        // Result Elements
+        const finalScore = document.getElementById('final-score');
+        const correctCount = document.getElementById('correct-count');
+        const wrongCount = document.getElementById('wrong-count');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // --- EVENT LISTENERS ---
+        
+        // Time Button Selection
+        timeBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                timeBtns.forEach(b => {
+                    b.classList.remove('bg-indigo-600', 'text-white', 'ring-indigo-300');
+                    b.classList.add('bg-indigo-100', 'text-indigo-700', 'ring-transparent');
+                });
+                e.target.classList.remove('bg-indigo-100', 'text-indigo-700', 'ring-transparent');
+                e.target.classList.add('bg-indigo-600', 'text-white', 'ring-indigo-300');
+                state.timeMode = parseInt(e.target.getAttribute('data-val'));
+            });
+        });
+
+        startBtn.addEventListener('click', startGame);
+        
+        answerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if(!state.isPlaying) return;
+            checkAnswer();
+        });
+
+        restartBtn.addEventListener('click', () => {
+            switchScreen('menu');
+        });
+
+        // --- HELPER FUNCTIONS ---
+
+        function switchScreen(screenName) {
+            Object.values(screens).forEach(s => s.classList.add('hidden'));
+            screens[screenName].classList.remove('hidden');
+            screens[screenName].classList.add('pop-in');
+        }
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function startGame() {
+            // Setup State
+            state.category = categorySelect.value;
+            state.difficulty = difficultySelect.value;
+            state.score = 0;
+            state.correct = 0;
+            state.wrong = 0;
+            state.currentQuestion = 1;
+            state.isPlaying = true;
+            
+            // Update UI
+            scoreDisplay.textContent = state.score;
+            if (state.timeMode > 0) {
+                timerContainer.classList.remove('hidden');
+            } else {
+                timerContainer.classList.add('hidden');
+            }
+
+            switchScreen('game');
+            loadNextQuestion();
+        }
+
+        function loadNextQuestion() {
+            if (state.currentQuestion > state.maxQuestions) {
+                endGame();
+                return;
+            }
+
+            questionCountDisplay.textContent = `${state.currentQuestion}/${state.maxQuestions}`;
+            answerInput.value = '';
+            answerInput.focus();
+            
+            generateQuestionData();
+            
+            if (state.timeMode > 0) {
+                startTimer();
+            }
+        }
+
+        function generateQuestionData() {
+            let num1, num2, num3, operator1, operator2, questionText, answer;
+            
+            let currentCategory = state.category;
+            if (currentCategory === 'campuran') {
+                const categories = ['tambah', 'kurang', 'kali', 'bagi'];
+                currentCategory = categories[Math.floor(Math.random() * categories.length)];
+            }
+
+            // Ranges based on difficulty
+            let min = 1, max = 10;
+            if (state.difficulty === 'sedang') { min = 10; max = 50; }
+            else if (state.difficulty === 'sulit') { min = 20; max = 100; }
+
+            if (state.difficulty === 'hots') {
+                // HOTS Mode: 3 numbers combination to test order of operations / mental load
+                const ops = ['+', '-', '*'];
+                operator1 = ops[Math.floor(Math.random() * ops.length)];
+                operator2 = ops[Math.floor(Math.random() * ops.length)];
+                
+                num1 = getRandomInt(5, 20);
+                num2 = getRandomInt(2, 12);
+                num3 = getRandomInt(2, 12);
+
+                questionText = `${num1} ${operator1} ${num2} ${operator2} ${num3}`;
+                // Safe eval since we strictly control the string content
+                answer = eval(questionText);
+                
+                // Ensure no fractional answers just in case, though + - * won't make fractions
+                state.correctAnswer = answer;
+                mathQuestion.textContent = questionText;
+
+            } else {
+                // Standard mode (Mudah, Sedang, Sulit)
+                num1 = getRandomInt(min, max);
+                num2 = getRandomInt(min, max);
+
+                switch (currentCategory) {
+                    case 'tambah':
+                        answer = num1 + num2;
+                        questionText = `${num1} + ${num2}`;
+                        break;
+                    case 'kurang':
+                        // Ensure positive result for Mudah/Sedang
+                        if (state.difficulty !== 'sulit' && num1 < num2) {
+                            let temp = num1; num1 = num2; num2 = temp;
+                        }
+                        answer = num1 - num2;
+                        questionText = `${num1} - ${num2}`;
+                        break;
+                    case 'kali':
+                        // Scale down multiplication for difficulty
+                        if (state.difficulty === 'sedang') { num1 = getRandomInt(5, 15); num2 = getRandomInt(2, 10); }
+                        if (state.difficulty === 'sulit') { num1 = getRandomInt(10, 30); num2 = getRandomInt(5, 20); }
+                        answer = num1 * num2;
+                        questionText = `${num1} × ${num2}`;
+                        break;
+                    case 'bagi':
+                        // Ensure clean division by generating answer first
+                        if (state.difficulty === 'sedang') { num2 = getRandomInt(2, 10); answer = getRandomInt(5, 20); }
+                        else if (state.difficulty === 'sulit') { num2 = getRandomInt(3, 15); answer = getRandomInt(10, 30); }
+                        else { num2 = getRandomInt(1, 10); answer = getRandomInt(1, 10); }
+                        
+                        num1 = num2 * answer;
+                        questionText = `${num1} ÷ ${num2}`;
+                        break;
+                }
+                
+                state.correctAnswer = answer;
+                mathQuestion.textContent = questionText;
+            }
+        }
+
+        function startTimer() {
+            clearInterval(state.timer);
+            state.timeLeft = state.timeMode;
+            timerDisplay.textContent = `${state.timeLeft}s`;
+            timerDisplay.classList.remove('text-red-500');
+            
+            state.timer = setInterval(() => {
+                state.timeLeft--;
+                timerDisplay.textContent = `${state.timeLeft}s`;
+                
+                if (state.timeLeft <= 3) {
+                    timerDisplay.classList.add('text-red-500', 'shake-animation');
+                    setTimeout(() => timerDisplay.classList.remove('shake-animation'), 300);
+                }
+
+                if (state.timeLeft <= 0) {
+                    clearInterval(state.timer);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function showFeedback(isCorrect) {
+            feedbackMsg.style.opacity = '1';
+            if (isCorrect) {
+                feedbackMsg.textContent = "Benar! 🎉";
+                feedbackMsg.className = "text-center font-bold mt-4 h-6 text-green-500 transition-opacity duration-200";
+            } else {
+                feedbackMsg.textContent = `Salah! Jawaban: ${state.correctAnswer}`;
+                feedbackMsg.className = "text-center font-bold mt-4 h-6 text-red-500 transition-opacity duration-200";
+                answerInput.classList.add('shake-animation');
+                setTimeout(() => answerInput.classList.remove('shake-animation'), 300);
+            }
+            
+            setTimeout(() => {
+                feedbackMsg.style.opacity = '0';
+            }, 1000);
+        }
+
+        function checkAnswer() {
+            clearInterval(state.timer);
+            const userAnswer = parseFloat(answerInput.value);
+            
+            if (isNaN(userAnswer)) return; // Prevent empty submit
+
+            if (userAnswer === state.correctAnswer) {
+                // Base score + time bonus if applicable
+                let points = 10;
+                if (state.timeMode > 0) {
+                    points += state.timeLeft; // Bonus for answering quickly
+                }
+                state.score += points;
+                state.correct++;
+                scoreDisplay.textContent = state.score;
+                showFeedback(true);
+            } else {
+                state.wrong++;
+                showFeedback(false);
+            }
+
+            advanceGame();
+        }
+
+        function handleTimeOut() {
+            state.wrong++;
+            showFeedback(false);
+            advanceGame();
+        }
+
+        function advanceGame() {
+            state.currentQuestion++;
+            // Small delay to read feedback before moving on
+            setTimeout(() => {
+                loadNextQuestion();
+            }, 800);
+        }
+
+        function endGame() {
+            state.isPlaying = false;
+            clearInterval(state.timer);
+            
+            finalScore.textContent = state.score;
+            correctCount.textContent = state.correct;
+            wrongCount.textContent = state.wrong;
+            
+            switchScreen('result');
+        }
+
+    </script>
+</body>
+</html>
