@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master TIU - Geometri (Polri/TNI/CPNS)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f1f5f9; 
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+        
+        .cat-card { transition: all 0.2s ease; border: 2px solid transparent; }
+        .cat-card:hover { border-color: #1d4ed8; transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(29, 78, 216, 0.15); }
+        .cat-card.selected { border-color: #1d4ed8; background-color: #eff6ff; }
+        
+        .opt-btn { transition: all 0.15s ease; border: 2px solid #e2e8f0; }
+        .opt-btn:hover:not(:disabled) { border-color: #60a5fa; background-color: #eff6ff; transform: translateX(4px); }
+        .opt-btn.selected { background-color: #1e40af; color: white; border-color: #1e3a8a; }
+        .opt-btn.selected .opt-letter { background-color: white; color: #1e40af; }
+        
+        .header-bg { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #064e3b 100%); }
+        .timer-pulse { animation: pulseRed 1s infinite; }
+        @keyframes pulseRed { 0%, 100% { color: #e11d48; } 50% { color: #fda4af; } }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex justify-center items-center py-8 px-4 sm:px-6">
+
+    <div class="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden relative border border-slate-200">
+        
+        <!-- Header -->
+        <div class="header-bg text-white p-6 sm:p-8 text-center relative border-b-4 border-amber-500">
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center justify-center gap-3">
+                <svg class="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                PRO Tryout TIU Geometri 
+            </h1>
+            <p class="text-slate-200 mt-2 text-sm sm:text-base font-medium">Bank Soal Dinamis & Dilengkapi Trik Cepat Bimbel</p>
+        </div>
+
+        <!-- 1. Home Screen -->
+        <div id="home-screen" class="p-6 sm:p-10 fade-in">
+            <div class="mb-8 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-md text-sm">1</span> Target Waktu Anda
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <label class="cursor-pointer relative">
+                        <input type="radio" name="timer" value="60" class="peer sr-only" checked>
+                        <div class="p-4 border-2 border-slate-300 rounded-xl peer-checked:border-blue-600 peer-checked:bg-blue-50 text-center transition">
+                            <span class="block text-lg font-bold text-slate-700 peer-checked:text-blue-700">60 Detik / Soal</span>
+                            <span class="inline-block mt-1 text-xs font-bold bg-amber-100 text-amber-700 px-2 py-1 rounded-md uppercase">Standar Ujian</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer relative">
+                        <input type="radio" name="timer" value="120" class="peer sr-only">
+                        <div class="p-4 border-2 border-slate-300 rounded-xl peer-checked:border-blue-600 peer-checked:bg-blue-50 text-center transition">
+                            <span class="block text-lg font-bold text-slate-700 peer-checked:text-blue-700">120 Detik / Soal</span>
+                            <span class="inline-block mt-1 text-xs font-bold text-slate-500 bg-slate-200 px-2 py-1 rounded-md uppercase">Lebih Santai</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer relative">
+                        <input type="radio" name="timer" value="0" class="peer sr-only">
+                        <div class="p-4 border-2 border-slate-300 rounded-xl peer-checked:border-blue-600 peer-checked:bg-blue-50 text-center transition">
+                            <span class="block text-lg font-bold text-slate-700 peer-checked:text-blue-700">Tanpa Waktu</span>
+                            <span class="inline-block mt-1 text-xs font-bold text-white bg-emerald-600 px-2 py-1 rounded-md uppercase">Fokus Trik</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-md text-sm">2</span> Fokus Latihan (10 Soal Acak)
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4" id="category-grid"></div>
+            </div>
+
+            <button onclick="startQuiz()" id="start-btn" class="w-full bg-slate-200 text-slate-400 font-bold py-4 rounded-xl transition text-lg cursor-not-allowed uppercase tracking-wide" disabled>
+                Pilih Topik Untuk Mulai
+            </button>
+        </div>
+
+        <!-- 2. Quiz Screen -->
+        <div id="quiz-screen" class="p-6 sm:p-10 hidden flex-col min-h-[550px]">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-2 border-slate-100 pb-4 mb-6 gap-4">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <span id="question-counter" class="bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded tracking-wide">SOAL 1/10</span>
+                        <span id="difficulty-badge" class="text-xs font-bold px-3 py-1.5 rounded border bg-slate-100 uppercase">MUDAH</span>
+                    </div>
+                </div>
+                <div id="timer-box-container">
+                    <div id="timer-box" class="flex items-center gap-2 bg-slate-50 text-slate-700 border-2 border-slate-200 px-4 py-2 rounded-xl font-bold transition-colors duration-300">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <span id="timer-display" class="text-xl tabular-nums tracking-wider">01:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6 flex-grow flex flex-col">
+                <div class="bg-blue-50/40 p-5 sm:p-7 rounded-2xl border border-blue-100 mb-6 text-slate-800 text-[17px] leading-relaxed font-semibold shadow-sm" id="question-text">
+                </div>
+                <div id="options-container" class="space-y-3 mt-auto"></div>
+            </div>
+
+            <button id="next-btn" onclick="submitAnswer()" class="w-full bg-slate-200 text-slate-400 font-bold py-4 rounded-xl cursor-not-allowed transition text-lg tracking-wide uppercase" disabled>
+                Pilih Jawaban Dulu
+            </button>
+        </div>
+
+        <!-- 3. Result Screen -->
+        <div id="result-screen" class="p-6 sm:p-10 hidden bg-slate-50">
+            <div class="text-center mb-8 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+                <h2 class="text-xl font-bold text-slate-500 mb-2 uppercase tracking-widest text-sm">Nilai Tryout Anda</h2>
+                <div class="text-6xl font-black text-blue-700 my-2" id="final-score">0</div>
+                <div id="result-summary" class="inline-block mt-4 bg-slate-100 text-slate-700 px-4 py-2 rounded-lg font-bold border border-slate-200">
+                    Benar: 0 | Salah: 0
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="font-bold text-xl mb-4 text-slate-800 flex items-center gap-2 border-b-2 border-slate-200 pb-3">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Evaluasi & Trik Cepat Bimbel
+                </h3>
+                <div id="review-container" class="space-y-5"></div>
+            </div>
+
+            <button onclick="resetApp()" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-4 rounded-xl transition text-lg mt-4 shadow-lg uppercase tracking-wide">
+                Mulai Tryout Baru (Soal Diacak Lagi)
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const categories = [
+            { id: 1, title: "Bangun Datar", desc: "Luas/Keliling Lahan, Ubin, Pagar.", icon: "📐" },
+            { id: 2, title: "Khusus Lingkaran", desc: "Roda Berputar, Taman Lingkaran.", icon: "⭕" },
+            { id: 3, title: "Bangun Ruang", desc: "Kapasitas Bak, Kubus, Kawat.", icon: "🧊" },
+            { id: 4, title: "Tryout Campuran", desc: "Kombinasi Acak Semua Materi.", icon: "🔥", isSpecial: true }
+        ];
+
+        let selectedCategoryId = null;
+        let timePerQuestion = 60;
+        let questions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+        let timerInterval;
+        let timeRemaining = 0;
+        let currentSelectedOption = null;
+        const totalQuestions = 10;
+
+const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+        
+        // Formatter Mata Uang
+        const rp = (num) => "Rp" + num.toLocaleString('id-ID');
+
+        // Generator Opsi Acak
+        const genOptions = (correct, manualDistractors, unit = "") => {
+            let ops = new Set();
+            let cStr = correct.toString();
+            ops.add(cStr);
+            
+            for(let d of manualDistractors) {
+                let dStr = d.toString();
+                if(ops.size < 5 && dStr !== cStr) ops.add(dStr);
+            }
+            
+            let isNumber = !isNaN(parseFloat(correct));
+            let modifier = 1;
+            while(ops.size < 5) {
+                let fallback = isNumber ? parseFloat(correct) + (modifier * (correct > 50 ? 10 : 1)) : correct + modifier;
+                let fStr = fallback.toString();
+                if(!ops.has(fStr) && fallback > 0) ops.add(fStr);
+                modifier = modifier > 0 ? -modifier : (-modifier) + 1;
+            }
+
+            return Array.from(ops).map(x => ({ 
+                text: isNumber ? parseFloat(x).toLocaleString('id-ID') + (unit ? ` ${unit}` : '') : x + (unit ? ` ${unit}` : ''),
+                isCorrect: x === cStr 
+            })).sort(() => Math.random() - 0.5); 
+        };
+
+        // ==========================================
+        // HELPER: UI UNTUK TRIK CEPAT (KOTAK SPESIAL)
+        // ==========================================
+        const trikUI = (langkahArr) => `
+        <div class="mt-4 bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200 rounded-xl p-4 shadow-sm">
+            <div class="text-indigo-800 font-extrabold text-[13px] mb-3 flex items-center gap-2 uppercase tracking-wide">
+                <span class="bg-indigo-600 text-white p-1 rounded-md">🚀</span> 
+                Trik Cepat (Hitungan Detik)
+            </div>
+            <ul class="list-decimal ml-5 text-[14px] text-indigo-900 space-y-2 font-medium">
+                ${langkahArr.map(l => `<li>${l}</li>`).join('')}
+            </ul>
+        </div>`;
+
+        // ==========================================
+        // 20 BANK SOAL DENGAN PENJELASAN DETAIL
+        // ==========================================
+        const questionBank = [
+            // --- KATEGORI 1: BANGUN DATAR ---
+            { 
+                cat: 1, gen: () => {
+                let m = rand([4, 6, 8, 10]); let cm = rand([20, 40, 50]); 
+                let ans = (m*100/cm) * (m*100/cm);
+                return {
+                    difficulty: 'Sedang',
+                    text: `Lantai aula berbentuk persegi berukuran ${m} m × ${m} m akan dipasangi keramik ukuran ${cm} cm × ${cm} cm. Berapa banyak keramik yang dibutuhkan?`,
+                    options: genOptions(ans, [ans/10, ans*10, (m*m)/cm], "buah"),
+                    explanation: `<b>[CARA BIASA]</b><br>Luas Lantai = ${m}m x ${m}m = ${m*m} m&sup2; = ${m*m*10000} cm&sup2;.<br>Luas Keramik = ${cm} x ${cm} = ${cm*cm} cm&sup2;.<br>Jumlah = ${m*m*10000} / ${cm*cm} = ${ans}.` + 
+                    trikUI([
+                        `<b>Samakan satuan dulu:</b> ${m} m = <mark class="bg-yellow-200 px-1 rounded">${m*100} cm</mark>`,
+                        `<b>Jangan hitung luas total!</b> Langsung bagi sisi ruangan dengan sisi keramik: <mark class="bg-yellow-200 px-1 rounded">${m*100} ÷ ${cm} = ${m*100/cm}</mark>`,
+                        `<b>Kuadratkan hasilnya:</b> ${m*100/cm} × ${m*100/cm} = <b>${ans} buah</b>.`
+                    ])
+                };
+            }},
+            { 
+                cat: 1, gen: () => {
+                let x = rand([3, 4, 5, 6]); let a = 3*x, t = 4*x, m = 5*x; let hrg = rand([10, 15, 20]) * 100000;
+                let ans = (a * t / 2) * hrg;
+                let q = {
+                    difficulty: 'HOTS 🔥',
+                    text: `Tanah kebun berbentuk segitiga siku-siku memiliki sisi ${a} m, ${t} m, dan sisi terpanjang ${m} m. Jika dijual Rp${hrg.toLocaleString('id-ID')} per m&sup2;, total penjualannya adalah...`,
+                    options: genOptions(ans, [m*a/2*hrg, (a+t+m)*hrg, ans-500000]),
+                    explanation: `<b>[CARA BIASA]</b><br>Luas = 1/2 × ${a} × ${t} = ${a*t/2} m&sup2;.<br>Harga = ${a*t/2} × ${hrg} = ${ans}.` +
+                    trikUI([
+                        `<b>Abaikan sisi miring!</b> Angka terbesar (${m} m) hanya jebakan. Luas segitiga siku-siku cuma pakai 2 sisi terpendek.`,
+                        `<b>Kalikan dua sisi terpendek:</b> ${a} × ${t} = <mark class="bg-yellow-200 px-1 rounded">${a*t}</mark>`,
+                        `<b>Bagi dua lalu kalikan harga:</b> (${a*t} ÷ 2) × Rp${hrg/1000}k = <b>Rp${ans.toLocaleString('id-ID')}</b>`
+                    ])
+                };
+                q.options = q.options.map(o => ({...o, text: "Rp" + o.text})); return q;
+            }},
+            {
+                cat: 1, gen: () => {
+                let p = rand([20, 25, 30]); let l = rand([10, 15]); let lap = rand([3, 4, 5]);
+                let ans = 2 * (p + l) * lap;
+                return {
+                    difficulty: 'Sedang',
+                    text: `Seorang prajurit TNI lari pagi mengelilingi lapangan berukuran panjang ${p} m dan lebar ${l} m. Jika ia berlari sebanyak ${lap} putaran, jarak yang ditempuhnya adalah...`,
+                    options: genOptions(ans, [p*l*lap, (p+l)*lap, ans+10, ans-10], "meter"),
+                    explanation: `<b>[CARA BIASA]</b><br>Keliling = 2 × (${p} + ${l}) = ${2*(p+l)} m.<br>Total Jarak = ${2*(p+l)} × ${lap} = ${ans} m.` +
+                    trikUI([
+                        `<b>Jumlahkan panjang dan lebar:</b> ${p} + ${l} = <mark class="bg-yellow-200 px-1 rounded">${p+l}</mark>`,
+                        `<b>Kalikan dua (rumus keliling):</b> ${p+l} × 2 = <mark class="bg-yellow-200 px-1 rounded">${2*(p+l)}</mark>`,
+                        `<b>Kalikan jumlah putaran:</b> ${2*(p+l)} × ${lap} = <b>${ans} meter</b>.`
+                    ])
+                };
+            }},
+            {
+                cat: 1, gen: () => {
+                let s = rand([10, 15, 20]); let jl = rand([1, 2]); 
+                let sluas = s + (2 * jl); let ans = (sluas * sluas) - (s * s);
+                return {
+                    difficulty: 'HOTS 🔥',
+                    text: `Sebuah taman berbentuk persegi dengan panjang sisi ${s} meter. Di sekeliling bagian luar taman tersebut dibuat jalan selebar ${jl} meter. Berapakah luas jalan tersebut?`,
+                    options: genOptions(ans, [(s+jl)*(s+jl)-(s*s), s*s*jl, 4*s*jl], "m²"),
+                    explanation: `<b>[CARA BIASA]</b><br>Sisi total = ${s} + ${jl} + ${jl} = ${sluas} m.<br>Luas jalan = (${sluas} × ${sluas}) - (${s} × ${s}) = ${ans} m&sup2;.` +
+                    trikUI([
+                        `<b>Awas Jebakan Lebar Jalan!</b> Lebar jalan ada di KIRI & KANAN, jadi sisi taman harus ditambah ${jl} × 2 = <mark class="bg-yellow-200 px-1 rounded">${jl*2} meter</mark>.`,
+                        `<b>Sisi Besar:</b> ${s} + ${jl*2} = <mark class="bg-yellow-200 px-1 rounded">${sluas} m</mark>.`,
+                        `<b>Pakai rumus Aljabar a² - b² = (a+b)(a-b):</b> Luas jalan = (${sluas} + ${s}) × (${sluas} - ${s}) = ${sluas+s} × ${sluas-s} = <b>${ans} m&sup2;</b>. Tidak perlu ngitung kuadrat besar!`
+                    ])
+                };
+            }},
+            {
+                cat: 1, gen: () => {
+                let p = rand([8, 10, 12]); let l = rand([4, 5, 6]); let pp = rand([2]); let lp = 1;
+                let ans = (p * l) - (pp * lp);
+                return {
+                    difficulty: 'Sedang',
+                    text: `Dinding kamar berbentuk persegi panjang berukuran panjang ${p} m dan tinggi ${l} m akan dicat. Di dinding tersebut terdapat sebuah pintu berukuran ${pp} m × ${lp} m yang tidak ikut dicat. Berapa luas dinding yang akan dicat?`,
+                    options: genOptions(ans, [p*l, p*l+pp*lp, (p*l)/2], "m²"),
+                    explanation: `<b>[CARA BIASA]</b><br>Luas Dinding = ${p} × ${l} = ${p*l} m&sup2;.<br>Luas Pintu = ${pp} × ${lp} = ${pp*lp} m&sup2;.<br>Luas Dicat = ${p*l} - ${pp*lp} = ${ans} m&sup2;.` +
+                    trikUI([
+                        `<b>Cari luas dinding utuh:</b> ${p} × ${l} = <mark class="bg-yellow-200 px-1 rounded">${p*l} m&sup2;</mark>.`,
+                        `<b>Cari luas lubang (pintu):</b> ${pp} × ${lp} = <mark class="bg-yellow-200 px-1 rounded">${pp*lp} m&sup2;</mark>.`,
+                        `<b>Tinggal Kurangi:</b> ${p*l} - ${pp*lp} = <b>${ans} m&sup2;</b>. (Dinding selalu dikurang area berlubang, jangan ditambah).`
+                    ])
+                };
+            }},
+
+            // --- KATEGORI 2: KHUSUS LINGKARAN ---
+            {
+                cat: 2, gen: () => {
+                let r = rand([14, 21, 28]); let putar = rand([500, 1000]);
+                let k = 2 * (22/7) * r; let ans = (k * putar) / 100;
+                return {
+                    difficulty: 'HOTS 🔥',
+                    text: `Ban mobil patroli polisi memiliki jari-jari ${r} cm. Jika ban tersebut berputar ${putar} kali, berapakah jarak lintasan yang telah ditempuh (dalam meter)?`,
+                    options: genOptions(ans, [((22/7)*r*r*putar)/100, k*putar, ans+20], "meter"),
+                    explanation: `<b>[CARA BIASA]</b><br>Keliling = 2 × 22/7 × ${r} = ${k} cm.<br>Jarak Total = ${k} × ${putar} = ${k*putar} cm = ${ans} meter.` +
+                    trikUI([
+                        `<b>Kata Kunci 'Berputar' = Keliling:</b> Abaikan rumus luas (πr²).`,
+                        `<b>Cari Keliling:</b> Jari-jari kelipatan 7 sangat gampang dicoret. 2 × 22/7 × ${r} = <mark class="bg-yellow-200 px-1 rounded">${k} cm</mark>.`,
+                        `<b>Kalikan Putaran & Konversi ke Meter:</b> ${k} × ${putar} = ${k*putar} cm. Coret dua angka nol (00) di belakang untuk ubah ke meter = <b>${ans} meter</b>.`
+                    ])
+                };
+            }},
+            {
+                cat: 2, gen: () => {
+                let r = rand([7, 14, 21]); let hrg = rand([10, 15, 25]) * 1000;
+                let ans = (22/7) * r * r * hrg;
+                let q = {
+                    difficulty: 'Sedang',
+                    text: `Taman kota berbentuk lingkaran dengan jari-jari ${r} meter. Seluruh permukaannya ditanami rumput dengan biaya Rp${hrg.toLocaleString('id-ID')}/m&sup2;. Total biayanya?`,
+                    options: genOptions(ans, [2*(22/7)*r*hrg, ans-10000, ans+15000]),
+                    explanation: `<b>[CARA BIASA]</b><br>Luas = 22/7 × ${r} × ${r} = ${(22/7)*r*r} m&sup2;.<br>Biaya = ${(22/7)*r*r} × ${hrg} = Rp${ans.toLocaleString('id-ID')}.` +
+                    trikUI([
+                        `<b>Kata Kunci 'Permukaan' = Luas:</b> Pakai rumus πr².`,
+                        `<b>Coret-coret Cepat:</b> 22/7 × ${r} × ${r}. Coret ${r} dengan 7 sisa ${r/7}. Jadinya: 22 × ${r/7} × ${r} = <mark class="bg-yellow-200 px-1 rounded">${(22/7)*r*r} m&sup2;</mark>.`,
+                        `<b>Kalikan Biaya:</b> ${(22/7)*r*r} × ${hrg/1000}k = <b>Rp${ans.toLocaleString('id-ID')}</b>.`
+                    ])
+                };
+                q.options = q.options.map(o => ({...o, text: "Rp" + o.text})); return q;
+            }},
+            {
+                cat: 2, gen: () => {
+                let r = rand([14, 28, 35]); let hrg = rand([50, 100]) * 1000;
+                let k_lengkung = (22/7) * r; let k_total = k_lengkung + (2 * r);
+                let ans = k_total * hrg;
+                let q = {
+                    difficulty: 'HOTS 🔥',
+                    text: `Taman berbentuk SETENGAH lingkaran dengan jari-jari ${r} meter akan dipagari seluruh KELILINGNYA. Jika harga pagar Rp${hrg.toLocaleString('id-ID')}/m, berapakah total biaya pagar?`,
+                    options: genOptions(ans, [k_lengkung*hrg, (2*(22/7)*r)*hrg, ans-50000]),
+                    explanation: `<b>[CARA BIASA]</b><br>Busur lengkung = 1/2 × (2 × 22/7 × ${r}) = ${k_lengkung} m.<br>Diameter (Garis bawah) = 2 × ${r} = ${2*r} m.<br>Keliling Total = ${k_total} m.` +
+                    trikUI([
+                        `<b>Awas Jebakan Keliling Setengah Lingkaran!</b> Kelilingnya bukan cuma garis lengkung (busur), tapi <b>harus ditambah garis lurus (diameter)</b> agar tertutup rapat.`,
+                        `<b>Hitung Busur:</b> 22/7 × ${r} = <mark class="bg-yellow-200 px-1 rounded">${k_lengkung} m</mark>.`,
+                        `<b>Tambah Garis Lurus (Diameter):</b> ${k_lengkung} + (${r} × 2) = <mark class="bg-yellow-200 px-1 rounded">${k_total} m</mark>.`,
+                        `<b>Kalikan Biaya:</b> ${k_total} × Rp${hrg/1000}k = <b>Rp${ans.toLocaleString('id-ID')}</b>.`
+                    ])
+                };
+                q.options = q.options.map(o => ({...o, text: "Rp" + o.text})); return q;
+            }},
+
+            // --- KATEGORI 3: BANGUN RUANG ---
+            {
+                cat: 3, gen: () => {
+                let p = rand([100, 120]); let l = rand([50, 80]); let t = rand([50, 100]);
+                let volCm3 = p * l * t; let volLiter = volCm3 / 1000;
+                let ans = volLiter - (volLiter * 0.25);
+                return {
+                    difficulty: 'HOTS 🔥',
+                    text: `Bak mandi balok ukurannya ${p} cm × ${l} cm × ${t} cm. Jika bak sudah terisi air seperempat (1/4) bagian, berapa <b>liter</b> air lagi untuk memenuhi bak?`,
+                    options: genOptions(ans, [volLiter, volLiter*0.25, volCm3], "liter"),
+                    explanation: `<b>[CARA BIASA]</b><br>Volume = ${p} × ${l} × ${t} = ${volCm3} cm&sup3; = ${volLiter} Liter.<br>Kekurangan = 3/4 × ${volLiter} = ${ans} Liter.` +
+                    trikUI([
+                        `<b>Ubah ke dm (Liter) sejak awal:</b> ${p} cm = ${p/10} dm. ${l} cm = ${l/10} dm. ${t} cm = ${t/10} dm.`,
+                        `<b>Hitung Volume Total (Liter):</b> ${p/10} × ${l/10} × ${t/10} = <mark class="bg-yellow-200 px-1 rounded">${volLiter} Liter</mark>.`,
+                        `<b>Fokus ke KEKURANGANNYA:</b> Bak sudah terisi 1/4, berarti kurangnya <b>3/4</b>. Jangan hitung yang 1/4!`,
+                        `<b>Jawaban:</b> 3/4 × ${volLiter} = <b>${ans} Liter</b>.`
+                    ])
+                };
+            }},
+            {
+                cat: 3, gen: () => {
+                let p = 60, l = 40, t = 40; let s = 10;
+                let ans = (p/s) * (l/s) * (t/s);
+                return {
+                    difficulty: 'Sedang',
+                    text: `Kardus logistik ukuran ${p} cm × ${l} cm × ${t} cm akan diisi dus obat berbentuk kubus bersisi ${s} cm. Berapa dus obat maksimal yang masuk ke kardus besar?`,
+                    options: genOptions(ans, [(p*l*t)/(s*s), ans*2, ans-10], "dus"),
+                    explanation: `<b>[CARA BIASA]</b><br>Vol Balok = ${p} × ${l} × ${t} = ${p*l*t} cm&sup3;.<br>Vol Kubus = ${s} × ${s} × ${s} = ${s*s*s} cm&sup3;.<br>Jumlah = ${p*l*t} / ${s*s*s} = ${ans} dus.` +
+                    trikUI([
+                        `<b>Jangan hitung volume total!</b> Angkanya akan jadi keriting dan bikin pusing membaginya.`,
+                        `<b>Bagi rusuknya satu per satu dengan sisi kubus:</b>`,
+                        `Panjang muat: ${p} ÷ ${s} = <mark class="bg-yellow-200 px-1 rounded">${p/s}</mark>.`,
+                        `Lebar muat: ${l} ÷ ${s} = <mark class="bg-yellow-200 px-1 rounded">${l/s}</mark>.`,
+                        `Tinggi muat: ${t} ÷ ${s} = <mark class="bg-yellow-200 px-1 rounded">${t/s}</mark>.`,
+                        `<b>Kalikan hasilnya:</b> ${p/s} × ${l/s} × ${t/s} = <b>${ans} dus</b>. Hemat coretan!`
+                    ])
+                };
+            }},
+            {
+                cat: 3, gen: () => {
+                let p = rand([2, 3]); let l = rand([1, 2]); let t = rand([1, 2]);
+                let ans = (p*l) + 2*(p*t) + 2*(l*t);
+                return {
+                    difficulty: 'HOTS 🔥',
+                    text: `Kolam renang berbentuk balok memiliki panjang ${p} m, lebar ${l} m, dan kedalaman (tinggi) ${t} m. Seluruh bagian DALAM kolam (dasar dan dinding) akan dipasangi keramik. Berapakah luas permukaan yang dipasangi keramik?`,
+                    options: genOptions(ans, [2*(p*l + p*t + l*t), p*l*t, ans+p*l], "m²"),
+                    explanation: `<b>[CARA BIASA]</b><br>Dasar = ${p} × ${l} = ${p*l}.<br>Dinding P×T = 2 × (${p} × ${t}) = ${2*p*t}.<br>Dinding L×T = 2 × (${l} × ${t}) = ${2*l*t}.<br>Total = ${p*l} + ${2*p*t} + ${2*l*t} = ${ans} m&sup2;.` +
+                    trikUI([
+                        `<b>Jebakan Logika:</b> Kolam renang atau Bak Mandi <b>TIDAK PUNYA TUTUP ATAS</b>.`,
+                        `<b>Rumus Permukaan Balok Normal:</b> 2×(PL) + 2×(PT) + 2×(LT).`,
+                        `<b>Trik Kolam:</b> Hilangkan angka 2 pada PL (Dasar kolam cuma 1 sisi). Rumusnya jadi: <mark class="bg-yellow-200 px-1 rounded">PL + 2(PT) + 2(LT)</mark>`,
+                        `<b>Hitung:</b> (${p}×${l}) + 2(${p}×${t}) + 2(${l}×${t}) = ${p*l} + ${2*p*t} + ${2*l*t} = <b>${ans} m&sup2;</b>.`
+                    ])
+                };
+            }}
+        ];
+        function getDiffStyle(diff) {
+            if(diff === 'Sedang') return 'bg-sky-100 text-sky-700 border-sky-200';
+            return 'bg-rose-100 text-rose-700 border-rose-200';
+        }
+
+        // Fitur Shuffle Array Modern (Fisher-Yates)
+        function shuffleArray(array) {
+            let curId = array.length;
+            while (0 !== curId) {
+                let randId = Math.floor(Math.random() * curId);
+                curId -= 1;
+                let tmp = array[curId];
+                array[curId] = array[randId];
+                array[randId] = tmp;
+            }
+            return array;
+        }
+
+        function initApp() {
+            const grid = document.getElementById('category-grid');
+            grid.innerHTML = '';
+            categories.forEach(c => {
+                const card = document.createElement('div');
+                let colorClass = c.isSpecial ? 'bg-amber-50 border-amber-200' : 'bg-white border-slate-200';
+                card.className = `cat-card cursor-pointer rounded-2xl p-5 relative ${colorClass}`;
+                card.onclick = () => selectCategory(c.id, card);
+                card.innerHTML = `
+                    <div class="flex items-start gap-4">
+                        <div class="text-3xl bg-white p-3 rounded-xl shadow-sm border border-slate-100">${c.icon}</div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 ${c.isSpecial ? 'text-amber-600' : ''}">${c.title}</h3>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed font-medium">${c.desc}</p>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function selectCategory(id, cardElem) {
+            document.querySelectorAll('.cat-card').forEach(el => el.classList.remove('selected'));
+            cardElem.classList.add('selected');
+            selectedCategoryId = id;
+            const startBtn = document.getElementById('start-btn');
+            startBtn.disabled = false;
+            startBtn.className = 'w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transition text-lg uppercase tracking-wide';
+            startBtn.innerText = "MULAI TRYOUT SEKARANG";
+        }
+
+        function startQuiz() {
+            timePerQuestion = parseInt(document.querySelector('input[name="timer"]:checked').value);
+            questions = [];
+            
+            // Siapkan bank template (Difilter sesuai kategori / Campuran)
+            let availableTemplates = questionBank.filter(q => selectedCategoryId === 4 || q.cat === selectedCategoryId);
+            
+            // ACAK URUTAN TEMPLATE SOAL agar tidak monoton
+            shuffleArray(availableTemplates);
+
+            // Generate 10 Soal secara rolling dari template
+            for(let i=0; i<totalQuestions; i++) {
+                // Modulo digunakan agar jika bank < 10, template diulang tapi datanya tetap akan berbeda 
+                // karena nilai angkanya (p, l, r) dibuat rand() di dalam fungsi gen()
+                let templateIdx = i % availableTemplates.length;
+                questions.push(availableTemplates[templateIdx].gen());
+            }
+
+            currentIndex = 0; score = 0; userAnswers = [];
+
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('quiz-screen').classList.add('fade-in');
+            
+            let catName = categories.find(c => c.id === selectedCategoryId).title;
+            document.getElementById('difficulty-badge').nextElementSibling;
+            
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            document.getElementById('question-counter').innerText = `SOAL ${currentIndex + 1}/${totalQuestions}`;
+            
+            const diffBadge = document.getElementById('difficulty-badge');
+            diffBadge.className = `text-xs font-bold px-3 py-1.5 rounded-md border ${getDiffStyle(q.difficulty)}`;
+            diffBadge.innerText = q.difficulty;
+
+            document.getElementById('question-text').innerHTML = q.text;
+            
+            const optContainer = document.getElementById('options-container');
+            optContainer.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                const letter = String.fromCharCode(65 + idx);
+                btn.className = 'opt-btn w-full text-left p-4 rounded-xl font-semibold text-slate-700 flex items-center gap-4 bg-white shadow-sm';
+                btn.innerHTML = `<span class="opt-letter w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center font-bold text-slate-500 text-sm transition-colors">${letter}</span> <span class="flex-1">${opt.text}</span>`;
+                btn.onclick = () => selectOption(btn, opt);
+                optContainer.appendChild(btn);
+            });
+
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = true;
+            nextBtn.className = 'w-full bg-slate-200 text-slate-400 font-bold py-4 rounded-xl cursor-not-allowed transition text-lg tracking-wide uppercase';
+            nextBtn.innerText = 'Pilih Jawaban Dulu';
+
+            currentSelectedOption = null;
+            startTimer();
+        }
+
+        function selectOption(btnElement, optionData) {
+            document.querySelectorAll('.opt-btn').forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+            currentSelectedOption = optionData;
+
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = false;
+            nextBtn.className = 'w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-md transition transform active:scale-[0.98] text-lg uppercase tracking-wide';
+            nextBtn.innerText = currentIndex === totalQuestions - 1 ? 'SELESAI & LIHAT NILAI' : 'KUNCI JAWABAN & LANJUT';
+        }
+
+        function startTimer() {
+            if(timerInterval) clearInterval(timerInterval);
+            const tContainer = document.getElementById('timer-box-container');
+            
+            if (timePerQuestion === 0) {
+                tContainer.classList.add('hidden');
+                return;
+            }
+            
+            tContainer.classList.remove('hidden');
+            timeRemaining = timePerQuestion;
+            updateTimerUI();
+
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerUI();
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    handleNext(true); 
+                }
+            }, 1000);
+        }
+
+        function updateTimerUI() {
+            const m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
+            const s = (timeRemaining % 60).toString().padStart(2, '0');
+            const box = document.getElementById('timer-box');
+            const disp = document.getElementById('timer-display');
+            
+            disp.innerText = `${m}:${s}`;
+            
+            if(timeRemaining <= 10) {
+                disp.classList.add('timer-pulse');
+                box.classList.replace('border-slate-200', 'border-rose-300');
+            } else {
+                disp.classList.remove('timer-pulse');
+                disp.style.color = 'inherit';
+                box.classList.replace('border-rose-300', 'border-slate-200');
+            }
+        }
+
+        function submitAnswer() { 
+            if (!currentSelectedOption) return;
+            handleNext(false); 
+        }
+
+        function handleNext(isTimeout) {
+            if(timerInterval) clearInterval(timerInterval);
+
+            let correctOpt = questions[currentIndex].options.find(o => o.isCorrect);
+            let isBenar = (!isTimeout && currentSelectedOption && currentSelectedOption.isCorrect);
+
+            userAnswers.push({
+                qText: questions[currentIndex].text,
+                diff: questions[currentIndex].difficulty,
+                selected: isTimeout ? "WAKTU HABIS" : currentSelectedOption.text,
+                correct: correctOpt.text,
+                isCorrect: isBenar,
+                explanation: questions[currentIndex].explanation
+            });
+
+            if (isBenar) score += 10; 
+
+            currentIndex++;
+            if (currentIndex < totalQuestions) {
+                const qs = document.getElementById('quiz-screen');
+                qs.classList.remove('fade-in'); void qs.offsetWidth; qs.classList.add('fade-in');
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            const res = document.getElementById('result-screen');
+            res.classList.remove('hidden'); res.classList.add('fade-in');
+
+            document.getElementById('final-score').innerText = score;
+            const cCount = userAnswers.filter(a => a.isCorrect).length;
+            document.getElementById('result-summary').innerHTML = `Benar: <b class="text-emerald-500">${cCount}</b> &nbsp;|&nbsp; Salah: <b class="text-rose-500">${totalQuestions - cCount}</b>`;
+
+            const container = document.getElementById('review-container');
+            container.innerHTML = '';
+
+            userAnswers.forEach((ans, idx) => {
+                const div = document.createElement('div');
+                div.className = `p-5 sm:p-6 rounded-2xl border bg-white ${ans.isCorrect ? 'border-emerald-200' : 'border-rose-200'} shadow-sm relative overflow-hidden`;
+                div.innerHTML += `<div class="absolute left-0 top-0 bottom-0 w-2 ${ans.isCorrect ? 'bg-emerald-500' : 'bg-rose-500'}"></div>`;
+                
+                div.innerHTML += `
+                    <div class="flex flex-wrap items-center gap-2 mb-3 pl-2">
+                        <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2 py-1 rounded">SOAL ${idx+1}</span>
+                        <span class="text-xs font-bold px-2 py-1 rounded border ${getDiffStyle(ans.diff)}">${ans.diff.toUpperCase()}</span>
+                        <span class="text-xs font-bold px-3 py-1 rounded-md ml-auto ${ans.isCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
+                            ${ans.isCorrect ? '✓ TEPAT' : '✗ KELIRU'}
+                        </span>
+                    </div>
+                    <p class="text-slate-800 font-medium mb-5 text-[15px] pl-2">${ans.qText}</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5 pl-2">
+                        <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                            <span class="block text-[11px] text-slate-500 mb-1 uppercase font-semibold">Jawaban Anda</span>
+                            <span class="font-bold text-sm ${ans.isCorrect ? 'text-emerald-600' : 'text-rose-600'}">${ans.selected}</span>
+                        </div>
+                        <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                            <span class="block text-[11px] text-blue-600 mb-1 uppercase font-semibold">Kunci Jawaban</span>
+                            <span class="font-bold text-sm text-blue-700">${ans.correct}</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-amber-50/40 p-5 rounded-xl border border-amber-100 ml-2">
+                        <div class="text-slate-700 text-[14px] leading-relaxed space-y-2">${ans.explanation}</div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function resetApp() {
+            document.getElementById('result-screen').classList.add('hidden');
+            const home = document.getElementById('home-screen');
+            home.classList.remove('hidden');
+            void home.offsetWidth; 
+            home.classList.add('fade-in');
+            
+            document.querySelectorAll('.cat-card').forEach(el => el.classList.remove('selected'));
+            selectedCategoryId = null;
+            const btn = document.getElementById('start-btn');
+            btn.disabled = true;
+            btn.className = 'w-full bg-slate-200 text-slate-400 font-bold py-4 rounded-xl cursor-not-allowed transition text-lg uppercase tracking-wide';
+            btn.innerText = 'Pilih Topik Untuk Mulai';
+        }
+
+        window.onload = () => { initApp(); };
+    </script>
+</body>
+</html>
